@@ -15,24 +15,33 @@ const Login = () => {
   const { user, loginError } = useSelector((state) => state.user);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("")
 
   useEffect(() => {
     if (loginError) {
       dispatch(clearErrors());
+      setError(loginError)
     }
-  }, [navigate]);
-  const handleLoginWithEmail = (event) => {
-    event.preventDefault();
-    dispatch(loginWithEmail({ email, password }));
+  }, [loginError, dispatch]);
+  const handleLoginWithEmail = (e) => {
+    e.preventDefault();
+    if(!email || !password) {
+      setError("이메일과 비밀번호를 입력해 주세요.")
+      return
+    }
+    setError("")
+    dispatch(loginWithEmail({ email, password, navigate }));
   };
 
   const handleGoogleLogin = async (googleData) => {
     //구글 로그인 하기
   };
-
-  if (user) {
-    navigate("/");
-  }
+  useEffect(()=>{
+    if (user) {
+      navigate("/");
+    }
+  },[user,navigate])
+  
   return (
     <>
       <Container className="login-area">

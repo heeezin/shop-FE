@@ -6,7 +6,17 @@ import { initialCart } from "../cart/cartSlice";
 
 export const loginWithEmail = createAsyncThunk(
   "user/loginWithEmail",
-  async ({ email, password }, { rejectWithValue }) => {}
+  async ({ email, password, navigate }, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await api.post('/user/login',{email,password})
+      dispatch(showToastMessage({message: "로그인 되었습니다!", status:"login success"}))
+      navigate('/')
+      return res.data.data
+    } catch (error) {
+      dispatch(showToastMessage({message:"로그인 실패 했습니다.", status:"error"}))
+      return rejectWithValue(error.error)
+    }
+  }
 );
 
 export const loginWithGoogle = createAsyncThunk(
@@ -37,7 +47,17 @@ export const registerUser = createAsyncThunk(
 
 export const loginWithToken = createAsyncThunk(
   "user/loginWithToken",
-  async (_, { rejectWithValue }) => {}
+  async (_, {rejectWithValue}) => {
+    try {
+      const storedToken = sessionStorage.getItem('token')
+      if(storedToken) {
+        const res = await api.get('/user/account')
+        return res.data.user
+      }
+    } catch (error) {
+      return rejectWithValue(error.error)
+    }
+  }
 );
 
 const userSlice = createSlice({
