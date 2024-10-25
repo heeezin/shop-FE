@@ -9,9 +9,11 @@ export const loginWithEmail = createAsyncThunk(
   async ({ email, password, navigate }, { dispatch, rejectWithValue }) => {
     try {
       const res = await api.post('/user/login',{email,password})
+      sessionStorage.setItem("token", res.data.token)
+      api.defaults.headers["Authorization"] = "Bearer " + res.data.token;
       dispatch(showToastMessage({message: "로그인 되었습니다!", status:"login success"}))
       navigate('/')
-      return res.data.data
+      return res.data.user
     } catch (error) {
       dispatch(showToastMessage({message:"로그인 실패 했습니다.", status:"error"}))
       return rejectWithValue(error.error)
@@ -47,15 +49,18 @@ export const registerUser = createAsyncThunk(
 
 export const loginWithToken = createAsyncThunk(
   "user/loginWithToken",
-  async (_, {rejectWithValue}) => {
-    try {
-      const storedToken = sessionStorage.getItem('token')
-      if(storedToken) {
-        const res = await api.get('/user/account')
-        return res.data.user
+  async (_, { rejectWithValue }) => {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      try {
+        api.defaults.headers["Authorization"] = "Bearer " + token;
+        const res = await api.get('/user/account');
+        return res.data.user;
+      } catch (error) {
+        return rejectWithValue(error.response?.data?.message || error.message);
       }
-    } catch (error) {
-      return rejectWithValue(error.error)
+    } else {
+      return rejectWithValue("토큰이 없습니다.");
     }
   }
 );
