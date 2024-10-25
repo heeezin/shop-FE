@@ -36,12 +36,11 @@ const Login = () => {
   const handleGoogleLogin = async (googleData) => {
     //구글 로그인 하기
   };
-  useEffect(()=>{
+  useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate("/"); // user 상태가 변경될 때
     }
-  },[user,navigate])
-  
+  }, [user, navigate]);
   return (
     <>
       <Container className="login-area">

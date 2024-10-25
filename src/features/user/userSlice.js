@@ -91,6 +91,19 @@ const userSlice = createSlice({
     .addCase(registerUser.rejected,(state,action)=>{
       state.registrationError = action.payload
     })
+    .addCase(loginWithEmail.pending, (state) => {
+      state.loading = true;
+      state.loginError = null; 
+    })
+    .addCase(loginWithEmail.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload;
+      state.loginError = null;
+    })
+    .addCase(loginWithEmail.rejected, (state, action) => {
+      state.loading = false;
+      state.loginError = action.payload;
+    });
   },
 });
 export const { clearErrors } = userSlice.actions;
