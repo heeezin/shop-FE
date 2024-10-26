@@ -10,8 +10,17 @@ const ToastMessage = () => {
   useEffect(() => {
     if (toastMessage) {
       const { message, status } = toastMessage;
-      if (message !== "" && status !== "") {
-        toast[status](message, { theme: "colored" });
+      if (message && status) {
+        // 상태에 따라 toast 함수 호출을 명시적으로 처리
+        if (status === "success") {
+          toast.success(message, { theme: "colored" });
+        } else if (status === "error") {
+          toast.error(message, { theme: "colored" });
+        } else if (status === "warning") {
+          toast.warning(message, { theme: "colored" });
+        } else {
+          toast.info(message, { theme: "colored" }); 
+        }
       }
     }
   }, [toastMessage]);

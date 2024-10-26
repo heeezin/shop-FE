@@ -12,9 +12,10 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../features/user/userSlice";
 
-const Navbar = ({ user }) => {
+const Navbar = () => {
   const dispatch = useDispatch();
   const { cartItemCount } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.user);
   const isMobile = window.navigator.userAgent.indexOf("Mobile") !== -1;
   const [showSearchBox, setShowSearchBox] = useState(false);
   const menuList = [

@@ -6,17 +6,16 @@ import { initialCart } from "../cart/cartSlice";
 
 export const loginWithEmail = createAsyncThunk(
   "user/loginWithEmail",
-  async ({ email, password, navigate }, { dispatch, rejectWithValue }) => {
+  async ({ email, password }, { dispatch, rejectWithValue }) => {
     try {
       const res = await api.post('/user/login',{email,password})
       sessionStorage.setItem("token", res.data.token)
       api.defaults.headers["Authorization"] = "Bearer " + res.data.token;
       dispatch(showToastMessage({message: "로그인 되었습니다!", status:"login success"}))
-      navigate('/')
       return res.data.user
     } catch (error) {
-      dispatch(showToastMessage({message:"로그인 실패 했습니다.", status:"error"}))
-      return rejectWithValue(error.error)
+      // dispatch(showToastMessage({message:"로그인 실패 했습니다.", status:"error"}))
+      return rejectWithValue(error.message)
     }
   }
 );
@@ -26,7 +25,10 @@ export const loginWithGoogle = createAsyncThunk(
   async (token, { rejectWithValue }) => {}
 );
 
-export const logout = () => (dispatch) => {};
+export const logout = () => (dispatch) => {
+  sessionStorage.removeItem("token")
+  dispatch(clearUser())
+};
 export const registerUser = createAsyncThunk(
   "user/registerUser",
   async (
@@ -50,19 +52,17 @@ export const registerUser = createAsyncThunk(
 export const loginWithToken = createAsyncThunk(
   "user/loginWithToken",
   async (_, { rejectWithValue }) => {
-    const token = sessionStorage.getItem('token');
-    if (token) {
-      try {
-        api.defaults.headers["Authorization"] = "Bearer " + token;
-        const res = await api.get('/user/account');
-        return res.data.user;
-      } catch (error) {
-        return rejectWithValue(error.response?.data?.message || error.message);
-      }
-    } else {
-      return rejectWithValue("토큰이 없습니다.");
+    const token = sessionStorage.getItem("token"); 
+    if (!token) {
+      return rejectWithValue("토큰X");
     }
-  }
+      try {
+        const res = await api.get('/user/account');
+        return res.data;
+      } catch (error) {
+        return rejectWithValue(error.message);
+      }
+    }
 );
 
 const userSlice = createSlice({
@@ -79,6 +79,10 @@ const userSlice = createSlice({
       state.loginError = null;
       state.registrationError = null;
     },
+    clearUser: (state) => {
+      state.user = null; 
+      state.success = false;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(registerUser.pending,(state)=>{
@@ -93,7 +97,6 @@ const userSlice = createSlice({
     })
     .addCase(loginWithEmail.pending, (state) => {
       state.loading = true;
-      state.loginError = null; 
     })
     .addCase(loginWithEmail.fulfilled, (state, action) => {
       state.loading = false;
@@ -103,8 +106,11 @@ const userSlice = createSlice({
     .addCase(loginWithEmail.rejected, (state, action) => {
       state.loading = false;
       state.loginError = action.payload;
-    });
+    })
+    .addCase(loginWithToken.fulfilled,(state, action)=>{
+      state.user = action.payload.user
+    })
   },
 });
-export const { clearErrors } = userSlice.actions;
+export const { clearErrors, clearUser } = userSlice.actions;
 export default userSlice.reducer;

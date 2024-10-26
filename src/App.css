@@ -43,6 +43,7 @@ body{
 }
 
 .landing-search-box{
+  top: 160px;
   right: 20px;
   position: absolute;
 

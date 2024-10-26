@@ -19,7 +19,7 @@ const RegisterPage = () => {
   const navigate = useNavigate();
   const [passwordError, setPasswordError] = useState("");
   const [policyError, setPolicyError] = useState(false);
-  const { registrationError } = useSelector((state) => state.user);
+  const { registrationError, loading } = useSelector((state) => state.user);
 
   const register = (event) => {
     event.preventDefault();
@@ -114,7 +114,7 @@ const RegisterPage = () => {
             checked={formData.policy}
           />
         </Form.Group>
-        <Button variant="danger" type="submit">
+        <Button variant="danger" type="submit" disabled={loading}>
           회원가입
         </Button>
       </Form>

@@ -12,7 +12,7 @@ const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, loginError } = useSelector((state) => state.user);
+  const { user, loginError, loading } = useSelector((state) => state.user);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("")
@@ -25,12 +25,7 @@ const Login = () => {
   }, [loginError, dispatch]);
   const handleLoginWithEmail = (e) => {
     e.preventDefault();
-    if(!email || !password) {
-      setError("이메일과 비밀번호를 입력해 주세요.")
-      return
-    }
-    setError("")
-    dispatch(loginWithEmail({ email, password, navigate }));
+    dispatch(loginWithEmail({ email, password }));
   };
 
   const handleGoogleLogin = async (googleData) => {
@@ -38,15 +33,15 @@ const Login = () => {
   };
   useEffect(() => {
     if (user) {
-      navigate("/"); // user 상태가 변경될 때
+      navigate("/"); 
     }
-  }, [user, navigate]);
+  }, [user,navigate]);
   return (
     <>
       <Container className="login-area">
-        {loginError && (
+        {error && (
           <div className="error-message">
-            <Alert variant="danger">{loginError}</Alert>
+            <Alert variant="danger">{error}</Alert>
           </div>
         )}
         <Form className="login-form" onSubmit={handleLoginWithEmail}>
@@ -70,7 +65,7 @@ const Login = () => {
             />
           </Form.Group>
           <div className="display-space-between login-button-area">
-            <Button variant="danger" type="submit">
+            <Button variant="danger" type="submit" disabled={loading}>
               Login
             </Button>
             <div>
