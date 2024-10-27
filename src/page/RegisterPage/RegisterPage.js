@@ -115,7 +115,7 @@ const RegisterPage = () => {
           />
         </Form.Group>
         <Button variant="danger" type="submit" disabled={loading}>
-          회원가입
+          {loading ? 'Signing up..' : 'Sign up'}
         </Button>
       </Form>
     </Container>
