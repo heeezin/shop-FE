@@ -83,7 +83,7 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = "";
         state.success = true; //상품 생성을 성공하면 다이얼로그 닫고, 실패는 메시지 다이얼로그 보여주고 닫진 않음
-        state.productList = [action.payload, ...state.productList];
+        state.productList = [action.payload, ...state.productList.slice(0, 2)];
       })
       .addCase(createProduct.rejected, (state, action) => {
         state.loading = false;

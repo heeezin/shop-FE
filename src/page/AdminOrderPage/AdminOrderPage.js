@@ -39,7 +39,7 @@ const AdminOrderPage = () => {
       dispatch(getOrderList({ ...searchQuery }));
       dispatch(clearSuccess());
     }
-  }, [success, dispatch, searchQuery]);
+  }, [success, dispatch, query]);
   
 
   useEffect(() => {
