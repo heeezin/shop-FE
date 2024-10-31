@@ -6,6 +6,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import OrderDetailDialog from "./component/OrderDetailDialog";
 import OrderTable from "./component/OrderTable";
 import SearchBox from "../../common/component/SearchBox";
+import {clearSuccess} from "../../features/product/productSlice"
 import {
   getOrderList,
   setSelectedOrder,
@@ -16,7 +17,7 @@ const AdminOrderPage = () => {
   const navigate = useNavigate();
   const [query] = useSearchParams();
   const dispatch = useDispatch();
-  const { orderList, totalPageNum } = useSelector((state) => state.order);
+  const { orderList, totalPageNum, success } = useSelector((state) => state.order);
   const [searchQuery, setSearchQuery] = useState({
     page: query.get("page") || 1,
     ordernum: query.get("ordernum") || "",
@@ -33,10 +34,13 @@ const AdminOrderPage = () => {
     "Total Price",
     "Status",
   ];
-
   useEffect(() => {
-    dispatch(getOrderList({ ...searchQuery }));
-  }, [query]);
+    if (success) {
+      dispatch(getOrderList({ ...searchQuery }));
+      dispatch(clearSuccess());
+    }
+  }, [success, dispatch, searchQuery]);
+  
 
   useEffect(() => {
     if (searchQuery.ordernum === "") {

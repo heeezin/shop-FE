@@ -31,7 +31,7 @@ export const createProduct = createAsyncThunk(
       dispatch(
         showToastMessage({ message: "상품 생성 완료", status: "success" })
       );
-      return res.data.data;
+      return res.data.product;
     } catch (error) {
       return rejectWithValue(error.error);
     }
@@ -70,6 +70,9 @@ const productSlice = createSlice({
       state.error = "";
       state.success = false;
     },
+    clearSuccess: (state) => {
+      state.success = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -80,6 +83,7 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = "";
         state.success = true; //상품 생성을 성공하면 다이얼로그 닫고, 실패는 메시지 다이얼로그 보여주고 닫진 않음
+        state.productList = [action.payload, ...state.productList];
       })
       .addCase(createProduct.rejected, (state, action) => {
         state.loading = false;
@@ -102,6 +106,6 @@ const productSlice = createSlice({
   },
 });
 
-export const { setSelectedProduct, setFilteredList, clearError } =
+export const { setSelectedProduct, setFilteredList, clearError, clearSuccess } =
   productSlice.actions;
 export default productSlice.reducer;
