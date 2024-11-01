@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../utils/api";
 import { showToastMessage } from "../common/uiSlice";
 
-// 비동기 액션 생성
 export const getProductList = createAsyncThunk(
   "products/getProductList",
   async (query, { rejectWithValue }) => {
@@ -19,7 +18,15 @@ export const getProductList = createAsyncThunk(
 
 export const getProductDetail = createAsyncThunk(
   "products/getProductDetail",
-  async (id, { rejectWithValue }) => {}
+  async (id, { rejectWithValue }) => {
+    try {
+      const res = await api.get(`/product/${id}`)
+      if(res.status!==200) throw new Error(res.error)
+        return res.data.data
+    } catch (error) {
+      return rejectWithValue(error.error)
+    }
+  }
 );
 
 export const createProduct = createAsyncThunk(
@@ -41,16 +48,26 @@ export const createProduct = createAsyncThunk(
 
 export const deleteProduct = createAsyncThunk(
   "products/deleteProduct",
-  async (id, { dispatch, rejectWithValue }) => {}
+  async (payload, { dispatch, rejectWithValue }) => {
+    const {id,page} = payload
+    try {
+      const res = await api.delete(`/product/${id}`)
+      if(res.status!==200) throw new Error(res.error)
+      dispatch(getProductList({page}))
+      return res.data.data
+    } catch (error) {
+      return rejectWithValue(error.error)      
+    }
+  }
 );
 
 export const editProduct = createAsyncThunk(
   "products/editProduct",
-  async ({ id, ...formData }, { dispatch, rejectWithValue }) => {
+  async ({ id,page, ...formData }, { dispatch, rejectWithValue }) => {
     try {
       const res = await api.put(`/product/${id}`,formData)
       if(res.status!==200) throw new Error(res.error)
-        dispatch(getProductList({page:1}))
+        dispatch(getProductList({page}))
         return res.data.data  
     } catch (error) {
         return rejectWithValue(error.error)      
@@ -124,6 +141,31 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         state.success = false;
+      })
+      .addCase(deleteProduct.pending,(state,action)=>{
+        state.loading = true;
+      })
+      .addCase(deleteProduct.fulfilled,(state,action)=>{
+        state.loading = false;
+        state.error = "";
+        state.success = true;
+      })
+      .addCase(deleteProduct.rejected,(state,action)=>{
+        state.loading = false;
+        state.error = action.payload;
+        state.success = false;
+      })
+      .addCase(getProductDetail.pending,(state,action)=>{
+        state.loading = true;
+      })
+      .addCase(getProductDetail.fulfilled,(state,action)=>{
+        state.loading = false;
+        state.error = "";
+        state.selectedProduct = action.payload;
+      })
+      .addCase(getProductDetail.rejected,(state,action)=>{
+        state.loading = false;
+        state.error = action.payload;
       })
   },
 });

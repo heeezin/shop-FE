@@ -21,7 +21,7 @@ const InitialFormData = {
   price: 0,
 };
 
-const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
+const NewItemDialog = ({ mode, showDialog, setShowDialog,currentPage }) => {
   const { error, success, selectedProduct } = useSelector(
     (state) => state.product
   );
@@ -56,6 +56,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     }
   }, [showDialog]);
   console.log('stock',stock)
+
   const handleClose = () => {
     //모든걸 초기화시키고;
     // 다이얼로그 닫아주기
@@ -82,7 +83,8 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
       dispatch(createProduct({...formData, stock: totalStock}))
     } else {
       // 상품 수정하기
-      dispatch(editProduct({...formData, stock: totalStock, id: selectedProduct._id}))
+      dispatch(editProduct({...formData, stock: totalStock, id: selectedProduct._id, page: currentPage}))
+      setShowDialog(false);
     }
   };
 
