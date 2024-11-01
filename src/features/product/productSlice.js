@@ -31,7 +31,8 @@ export const createProduct = createAsyncThunk(
       dispatch(
         showToastMessage({ message: "상품 생성 완료", status: "success" })
       );
-      return res.data.product;
+      dispatch(getProductList({page:1}))
+      return res.data.data;
     } catch (error) {
       return rejectWithValue(error.error);
     }
@@ -45,7 +46,16 @@ export const deleteProduct = createAsyncThunk(
 
 export const editProduct = createAsyncThunk(
   "products/editProduct",
-  async ({ id, ...formData }, { dispatch, rejectWithValue }) => {}
+  async ({ id, ...formData }, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await api.put(`/product/${id}`,formData)
+      if(res.status!==200) throw new Error(res.error)
+        dispatch(getProductList({page:1}))
+        return res.data.data  
+    } catch (error) {
+        return rejectWithValue(error.error)      
+    }
+  }
 );
 
 // 슬라이스 생성
@@ -83,7 +93,6 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = "";
         state.success = true; //상품 생성을 성공하면 다이얼로그 닫고, 실패는 메시지 다이얼로그 보여주고 닫진 않음
-        state.productList = [action.payload, ...state.productList.slice(0, 2)];
       })
       .addCase(createProduct.rejected, (state, action) => {
         state.loading = false;
@@ -102,7 +111,20 @@ const productSlice = createSlice({
       .addCase(getProductList.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+      .addCase(editProduct.pending,(state,action)=>{
+        state.loading = true;
+      })
+      .addCase(editProduct.fulfilled,(state,action)=>{
+        state.loading = false;
+        state.error = "";
+        state.success = true;
+      })
+      .addCase(editProduct.rejected,(state,action)=>{
+        state.loading = false;
+        state.error = action.payload;
+        state.success = false;
+      })
   },
 });
 
