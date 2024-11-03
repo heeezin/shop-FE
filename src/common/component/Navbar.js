@@ -44,7 +44,7 @@ const Navbar = () => {
   };
   useEffect(()=>{
     dispatch(getCartList())
-  },[user,dispatch])
+  },[user,cartItemCount,dispatch])
   return (
     <div>
       {showSearchBox && (

@@ -24,10 +24,18 @@ export const addToCart = createAsyncThunk(
           status: "success",
         })
       );
+      dispatch(getCartList())
       return res.data.cartItemQty;
     } catch (error) {
-      rejectWithValue(error.error)
-  }}
+        dispatch(
+          showToastMessage({
+            message: error.error,
+            status: "error",
+          })
+        );
+      return rejectWithValue(error.error); 
+    }
+  }
 );
 
 export const getCartList = createAsyncThunk(
