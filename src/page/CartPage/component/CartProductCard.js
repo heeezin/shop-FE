@@ -14,6 +14,7 @@ const CartProductCard = ({ item }) => {
 
   const deleteCart = (id) => {
     dispatch(deleteCartItem(id));
+    console.log('ddd',id)
   };
 
   return (
