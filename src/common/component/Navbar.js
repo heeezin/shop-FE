@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import {
@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../features/user/userSlice";
+import { getCartList } from "../../features/cart/cartSlice";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -41,6 +42,9 @@ const Navbar = () => {
   const handleLogout = () => {
     dispatch(logout());
   };
+  useEffect(()=>{
+    dispatch(getCartList())
+  },[user,dispatch])
   return (
     <div>
       {showSearchBox && (

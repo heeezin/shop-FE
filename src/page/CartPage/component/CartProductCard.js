@@ -1,20 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Row, Col, Form } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch } from "react-redux";
 import { currencyFormat } from "../../../utils/number";
-import { updateQty, deleteCartItem } from "../../../features/cart/cartSlice";
+import {
+  updateQty,
+  deleteCartItem,
+  getCartList,
+} from "../../../features/cart/cartSlice";
 const CartProductCard = ({ item }) => {
   const dispatch = useDispatch();
 
-  const handleQtyChange = (id, value) => {
-    dispatch(updateQty({ id, value }));
+  const handleQtyChange = (id, size, value) => {
+    dispatch(updateQty({ id, size, qty: value }));
   };
 
-  const deleteCart = (id) => {
-    dispatch(deleteCartItem(id));
-    console.log('ddd',id)
+  const deleteCart = (productId, size) => {
+    dispatch(deleteCartItem({ id: productId, size }));
   };
 
   return (
@@ -26,12 +29,11 @@ const CartProductCard = ({ item }) => {
         <Col md={10} xs={12}>
           <div className="display-flex space-between">
             <h3>{item.productId.name}</h3>
-            <button className="trash-button">
-              <FontAwesomeIcon
-                icon={faTrash}
-                width={24}
-                onClick={() => deleteCart(item._id)}
-              />
+            <button
+              className="trash-button"
+              onClick={() => deleteCart(item.productId._id, item.size)}
+            >
+              <FontAwesomeIcon icon={faTrash} width={24} />
             </button>
           </div>
 
@@ -44,22 +46,17 @@ const CartProductCard = ({ item }) => {
             Quantity:
             <Form.Select
               onChange={(event) =>
-                handleQtyChange(item._id, event.target.value)
+                handleQtyChange(item.productId._id, item.size, event.target.value)
               }
               required
               defaultValue={item.qty}
               className="qty-dropdown"
             >
-              <option value={1}>1</option>
-              <option value={2}>2</option>
-              <option value={3}>3</option>
-              <option value={4}>4</option>
-              <option value={5}>5</option>
-              <option value={6}>6</option>
-              <option value={7}>7</option>
-              <option value={8}>8</option>
-              <option value={9}>9</option>
-              <option value={10}>10</option>
+              {[...Array(10).keys()].map((i) => (
+                <option key={i + 1} value={i + 1}>
+                  {i + 1}
+                </option>
+              ))}
             </Form.Select>
           </div>
         </Col>
