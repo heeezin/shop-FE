@@ -1,11 +1,20 @@
 import React from "react";
-import { Container } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import "../PaymentPage/style/paymentPage.style.css";
 
 const OrderCompletePage = () => {
-  const { orderNum } = useSelector((state) => state.order);
+  const { orderNum, loading } = useSelector((state) => state.order);
+  if (loading) {
+    return (
+      <Container className="confirmation-page">
+        <Spinner animation="border" role="status" className="loading-spinner">
+          <span className="sr-only">Loading..</span>
+        </Spinner>
+      </Container>
+    );
+  }
   if (orderNum === "")
     return (
       <Container className="confirmation-page">
