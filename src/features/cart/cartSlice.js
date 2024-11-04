@@ -124,10 +124,7 @@ const cartSlice = createSlice({
           (total, item) => total + item.productId.price * item.qty,
           0
         );
-        state.cartItemCount = action.payload.reduce(
-          (total, item) => total + item.qty,
-          0
-        );
+        state.cartItemCount = new Set(action.payload.map(item => `${item.productId}_${item.size}`)).size;
       })
       .addCase(getCartList.rejected, (state, action) => {
         state.loading = false;
@@ -143,6 +140,7 @@ const cartSlice = createSlice({
           (total, item) => total + item.qty,
           0
         );
+        state.cartItemCount = new Set(action.payload.map(item => `${item.productId}_${item.size}`)).size;
       })
       .addCase(deleteCartItem.rejected, (state, action) => {
         state.loading = false;
@@ -155,10 +153,6 @@ const cartSlice = createSlice({
         state.loading = false;
         state.error = "";
         state.cartList = action.payload.data.items;
-        state.cartItemCount = action.payload.data.items.reduce(
-          (total, item) => total + item.qty,
-          0
-        );
         state.totalPrice = action.payload.data.items.reduce(
           (total, item) => total + item.qty * item.productId.price,
           0
