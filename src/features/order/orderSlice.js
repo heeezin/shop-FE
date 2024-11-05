@@ -20,6 +20,7 @@ export const createOrder = createAsyncThunk(
     try {
       const res = await api.post("/order",payload)
       if(res.status!==200) throw new Error(res.error)
+        dispatch(getCartQty())
         return res.data.orderNum
     } catch (error) {
       dispatch(showToastMessage({message: error.error, status: "error"}))
