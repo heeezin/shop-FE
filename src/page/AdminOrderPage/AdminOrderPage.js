@@ -8,6 +8,7 @@ import OrderTable from "./component/OrderTable";
 import SearchBox from "../../common/component/SearchBox";
 import {clearSuccess} from "../../features/product/productSlice"
 import {
+  getOrder,
   getOrderList,
   setSelectedOrder,
 } from "../../features/order/orderSlice";
@@ -35,12 +36,10 @@ const AdminOrderPage = () => {
     "Status",
   ];
   useEffect(() => {
-    if (success) {
-      dispatch(getOrderList({ ...searchQuery }));
+      dispatch(getOrder({ ...searchQuery }));
       dispatch(clearSuccess());
-    }
-  }, [success, dispatch, query]);
-  
+  }, [dispatch, searchQuery]);
+
 
   useEffect(() => {
     if (searchQuery.ordernum === "") {
