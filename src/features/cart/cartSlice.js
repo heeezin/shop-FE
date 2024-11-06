@@ -17,7 +17,6 @@ export const addToCart = createAsyncThunk(
   async ({ id, size }, { rejectWithValue, dispatch }) => {
     try {
       const res = await api.post("/cart", { productId: id, size, qty: 1 });
-      if (res.status !== 200) throw new Error(res.error);
       dispatch(
         showToastMessage({
           message: "카트에 아이템이 추가 됐습니다.",
@@ -45,7 +44,8 @@ export const getCartList = createAsyncThunk(
     if (!state.user.user) return;
     try {
       const res = await api.get("/cart");
-      if (res.status !== 200) throw new Error(res.error);
+      console.log('getCartList',res.data.data)
+
       return res.data.data;
     } catch (error) {
       return rejectWithValue(error.error);
@@ -58,7 +58,6 @@ export const deleteCartItem = createAsyncThunk(
   async ({ id, size }, { rejectWithValue, dispatch }) => {
     try {
       const res = await api.delete(`/cart/${id}`, { params: { size } });
-      if (res.status !== 200) throw new Error(res.error);
       dispatch(
         showToastMessage({
           message: "카트에 아이템이 삭제 됐습니다.",
@@ -66,6 +65,7 @@ export const deleteCartItem = createAsyncThunk(
         })
       );
       dispatch(getCartList());
+      console.log('deleteCartItem',res.data)
       return res.data;
     } catch (error) {
       return rejectWithValue(error.error);
@@ -78,7 +78,6 @@ export const updateQty = createAsyncThunk(
   async ({ id, size, qty }, { rejectWithValue, dispatch }) => {
     try {
       const res = await api.patch("/cart/editQty", { productId: id, size, qty });
-      if (res.status !== 200) throw new Error(res.error);
       dispatch(getCartList());
       return res.data;
     } catch (error) {
@@ -153,7 +152,7 @@ const cartSlice = createSlice({
           (total, item) => total + item.qty,
           0
         );
-        state.cartItemCount = new Set(action.payload.map(item => `${item.productId}_${item.size}`)).size;
+        state.cartItemCount = new Set(action.payload.data.map(item => `${item.productId}_${item.size}`)).size;
       })
       .addCase(deleteCartItem.rejected, (state, action) => {
         state.loading = false;

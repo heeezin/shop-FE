@@ -12,6 +12,9 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../features/user/userSlice";
 import { getCartList } from "../../features/cart/cartSlice";
+import { Alert } from "react-bootstrap";
+import Confirm from "./Confirm";
+import useConfirm from "../../utils/useConfirm";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -19,6 +22,9 @@ const Navbar = () => {
   const { user } = useSelector((state) => state.user);
   const isMobile = window.navigator.userAgent.indexOf("Mobile") !== -1;
   const [showSearchBox, setShowSearchBox] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const { show, message, openConfirm, handleConfirm, closeConfirm } = useConfirm();
+
   const menuList = [
     "여성",
     "Divided",
@@ -40,11 +46,15 @@ const Navbar = () => {
     }
   };
   const handleLogout = () => {
-    dispatch(logout());
+    openConfirm(()=>{
+      dispatch(logout())
+    },"로그아웃 하시겠습니까?")
+
   };
-  useEffect(()=>{
-    dispatch(getCartList())
-  },[user,cartItemCount,dispatch])
+  useEffect(() => {
+    dispatch(getCartList());
+  }, [user, cartItemCount, dispatch]);
+
   return (
     <div>
       {showSearchBox && (
@@ -87,15 +97,20 @@ const Navbar = () => {
         <div className="burger-menu hide">
           <FontAwesomeIcon icon={faBars} onClick={() => setWidth(250)} />
         </div>
-
         <div>
           <div className="display-flex">
             {user ? (
-              <div onClick={handleLogout} className="nav-icon">
+              <div className="nav-icon">
                 <FontAwesomeIcon icon={faUser} />
                 {!isMobile && (
-                  <span style={{ cursor: "pointer" }}>로그아웃</span>
+                  <span style={{ cursor: "pointer" }} onClick={handleLogout}>로그아웃</span>
                 )}
+                <Confirm
+                  show={show}
+                  onConfirm={handleConfirm}
+                  onCancel={closeConfirm}
+                  message={message}
+                />
               </div>
             ) : (
               <div onClick={() => navigate("/login")} className="nav-icon">

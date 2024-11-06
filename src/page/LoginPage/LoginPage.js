@@ -15,12 +15,12 @@ const Login = () => {
   const { user, loginError, loading } = useSelector((state) => state.user);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("")
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (loginError) {
       dispatch(clearErrors());
-      setError(loginError)
+      setError(loginError);
     }
   }, [loginError, dispatch]);
   const handleLoginWithEmail = (e) => {
@@ -30,12 +30,14 @@ const Login = () => {
 
   const handleGoogleLogin = async (googleData) => {
     //구글 로그인 하기
+    console.log("googleData", googleData);
+    dispatch(loginWithGoogle(googleData.credential));
   };
   useEffect(() => {
     if (user) {
-      navigate("/"); 
+      navigate("/");
     }
-  }, [user,navigate]);
+  }, [user, navigate]);
   return (
     <>
       <Container className="login-area">
@@ -66,7 +68,7 @@ const Login = () => {
           </Form.Group>
           <div className="display-space-between login-button-area">
             <Button variant="danger" type="submit" disabled={loading}>
-              {loading?'Logging in..':'Login'}
+              {loading ? "Logging in.." : "Login"}
             </Button>
             <div>
               아직 계정이 없으세요?<Link to="/register">회원가입 하기</Link>{" "}

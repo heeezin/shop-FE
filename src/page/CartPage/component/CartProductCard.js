@@ -9,7 +9,12 @@ import {
   deleteCartItem,
   getCartList,
 } from "../../../features/cart/cartSlice";
+import useConfirm from "../../../utils/useConfirm";
+import Confirm from "../../../common/component/Confirm";
+
 const CartProductCard = ({ item }) => {
+  const { show, message, openConfirm, handleConfirm, closeConfirm } = useConfirm();
+
   const dispatch = useDispatch();
 
   const handleQtyChange = (id, size, value) => {
@@ -17,7 +22,9 @@ const CartProductCard = ({ item }) => {
   };
 
   const deleteCart = (productId, size) => {
-    dispatch(deleteCartItem({ id: productId, size }));
+    openConfirm(()=>{
+      dispatch(deleteCartItem({ id: productId, size }));
+    },"삭제 하시겠습니까?")
   };
 
   return (
@@ -35,6 +42,12 @@ const CartProductCard = ({ item }) => {
             >
               <FontAwesomeIcon icon={faTrash} width={24} />
             </button>
+            <Confirm
+                  show={show}
+                  onConfirm={handleConfirm}
+                  onCancel={closeConfirm}
+                  message={message}
+                />
           </div>
 
           <div>
@@ -46,7 +59,11 @@ const CartProductCard = ({ item }) => {
             Quantity:
             <Form.Select
               onChange={(event) =>
-                handleQtyChange(item.productId._id, item.size, event.target.value)
+                handleQtyChange(
+                  item.productId._id,
+                  item.size,
+                  event.target.value
+                )
               }
               required
               defaultValue={item.qty}
