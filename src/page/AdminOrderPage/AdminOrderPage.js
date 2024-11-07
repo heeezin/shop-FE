@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Container } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import ReactPaginate from "react-paginate";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import OrderDetailDialog from "./component/OrderDetailDialog";
 import OrderTable from "./component/OrderTable";
 import SearchBox from "../../common/component/SearchBox";
-import {clearSuccess} from "../../features/product/productSlice"
+import { clearSuccess } from "../../features/product/productSlice";
 import {
   getOrder,
   getOrderList,
@@ -18,7 +18,9 @@ const AdminOrderPage = () => {
   const navigate = useNavigate();
   const [query] = useSearchParams();
   const dispatch = useDispatch();
-  const { orderList, totalPageNum, success } = useSelector((state) => state.order);
+  const { orderList, totalPageNum, success, loading } = useSelector(
+    (state) => state.order
+  );
   const [searchQuery, setSearchQuery] = useState({
     page: query.get("page") || 1,
     ordernum: query.get("ordernum") || "",
@@ -36,10 +38,9 @@ const AdminOrderPage = () => {
     "Status",
   ];
   useEffect(() => {
-      dispatch(getOrder({ ...searchQuery }));
-      dispatch(clearSuccess());
+    dispatch(getOrder({ ...searchQuery }));
+    dispatch(clearSuccess());
   }, [dispatch, searchQuery]);
-
 
   useEffect(() => {
     if (searchQuery.ordernum === "") {
@@ -76,15 +77,23 @@ const AdminOrderPage = () => {
           />
         </div>
 
-        <OrderTable
-          header={tableHeader}
-          data={orderList}
-          openEditForm={openEditForm}
-        />
+        {loading ? (
+          <div className="text-align-center">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading..</span>
+            </Spinner>
+          </div>
+        ) : (
+          <OrderTable
+            header={tableHeader}
+            data={orderList}
+            openEditForm={openEditForm}
+          />
+        )}
         <ReactPaginate
           nextLabel="next >"
           onPageChange={handlePageClick}
-          pageRangeDisplayed={5}
+          pageRangeDisplayed={3}
           pageCount={totalPageNum}
           forcePage={searchQuery.page - 1}
           previousLabel="< previous"
