@@ -34,7 +34,7 @@ export const getOrder = createAsyncThunk(
     try {
       const res = await api.get('/order/all', { params: {...query} });
       console.log("API response:", res.data);
-      return res.data.orders;
+      return { orders: res.data.orders, totalPageNum: res.data.totalPageNum };
     } catch (error) {
       dispatch(showToastMessage({ message: error.message, status: "error" }));
       return rejectWithValue(error.message);
@@ -105,7 +105,8 @@ const orderSlice = createSlice({
     })
     .addCase(getOrder.fulfilled, (state, action) => {
       state.loading = false;
-      state.orderList = action.payload;
+      state.orderList = action.payload.orders;
+      state.totalPageNum = action.payload.totalPageNum;
     })
     .addCase(getOrder.rejected, (state, action) => {
       state.loading = false;

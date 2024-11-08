@@ -23,28 +23,28 @@ export const addToCart = createAsyncThunk(
           status: "success",
         })
       );
-      dispatch(getCartList())
+      dispatch(getCartList());
       return res.data.cartItemQty;
     } catch (error) {
-        dispatch(
-          showToastMessage({
-            message: error.error,
-            status: "error",
-          })
-        );
-      return rejectWithValue(error.error); 
+      dispatch(
+        showToastMessage({
+          message: error.error,
+          status: "error",
+        })
+      );
+      return rejectWithValue(error.error);
     }
   }
 );
 
 export const getCartList = createAsyncThunk(
   "cart/getCartList",
-  async (_, { rejectWithValue, dispatch,getState }) => {
+  async (_, { rejectWithValue, dispatch, getState }) => {
     const state = getState();
     if (!state.user.user) return;
     try {
       const res = await api.get("/cart");
-      console.log('getCartList',res.data.data)
+      console.log("getCartList", res.data.data);
 
       return res.data.data;
     } catch (error) {
@@ -65,7 +65,7 @@ export const deleteCartItem = createAsyncThunk(
         })
       );
       dispatch(getCartList());
-      console.log('deleteCartItem',res.data)
+      console.log("deleteCartItem", res.data);
       return res.data;
     } catch (error) {
       return rejectWithValue(error.error);
@@ -77,7 +77,11 @@ export const updateQty = createAsyncThunk(
   "cart/updateQty",
   async ({ id, size, qty }, { rejectWithValue, dispatch }) => {
     try {
-      const res = await api.patch("/cart/editQty", { productId: id, size, qty });
+      const res = await api.patch("/cart/editQty", {
+        productId: id,
+        size,
+        qty,
+      });
       dispatch(getCartList());
       return res.data;
     } catch (error) {
@@ -90,12 +94,12 @@ export const getCartQty = createAsyncThunk(
   "cart/getCartQty",
   async (_, { rejectWithValue, dispatch }) => {
     try {
-      const res = await api.get("/cart/qty")
-      if(!res.status===200) throw new Error(res.error)
-        return res.data.qty
+      const res = await api.get("/cart/qty");
+      if (!res.status === 200) throw new Error(res.error);
+      return res.data.qty;
     } catch (error) {
-      dispatch(showToastMessage({message:error,status:"error"}))
-      return rejectWithValue(error)      
+      dispatch(showToastMessage({ message: error, status: "error" }));
+      return rejectWithValue(error);
     }
   }
 );
@@ -105,9 +109,9 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     initialCart: (state) => {
-      state.cartList = [];  
-      state.cartItemCount = 0;  
-      state.totalPrice = 0; 
+      state.cartList = [];
+      state.cartItemCount = 0;
+      state.totalPrice = 0;
     },
     // You can still add reducers here for non-async actions if necessary
   },
@@ -119,7 +123,9 @@ const cartSlice = createSlice({
       .addCase(addToCart.fulfilled, (state, action) => {
         state.loading = false;
         state.error = "";
-        state.cartItemCount = action.payload;
+        if (action.payload.status === "success") {
+        state.cartItemCount += 1;
+    }
       })
       .addCase(addToCart.rejected, (state, action) => {
         state.loading = false;
@@ -131,12 +137,15 @@ const cartSlice = createSlice({
       .addCase(getCartList.fulfilled, (state, action) => {
         state.loading = false;
         state.error = "";
-        state.cartList = action.payload;
+        state.cartList = action.payload || [];
         state.totalPrice = action.payload.reduce(
           (total, item) => total + item.productId.price * item.qty,
           0
         );
-        state.cartItemCount = new Set(action.payload.map(item => `${item.productId}_${item.size}`)).size;
+        state.cartItemCount = state.cartList.reduce(
+          (count, item) => count + item.qty,
+          0
+        );
       })
       .addCase(getCartList.rejected, (state, action) => {
         state.loading = false;
@@ -148,11 +157,11 @@ const cartSlice = createSlice({
       .addCase(deleteCartItem.fulfilled, (state, action) => {
         state.loading = false;
         state.error = "";
+        state.cartList = action.payload.data; 
         state.cartItemCount = state.cartList.reduce(
-          (total, item) => total + item.qty,
+          (count, item) => count + item.qty,
           0
         );
-        state.cartItemCount = new Set(action.payload.data.map(item => `${item.productId}_${item.size}`)).size;
       })
       .addCase(deleteCartItem.rejected, (state, action) => {
         state.loading = false;
@@ -180,7 +189,7 @@ const cartSlice = createSlice({
       .addCase(getCartQty.fulfilled, (state, action) => {
         state.loading = false;
         state.error = "";
-        state.cartItemCount = action.payload
+        state.cartItemCount = action.payload;
       })
       .addCase(getCartQty.rejected, (state, action) => {
         state.loading = false;

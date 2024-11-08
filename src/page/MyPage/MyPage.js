@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect } from "react";
-import { Container } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import OrderStatusCard from "./component/OrderStatusCard";
 import "./style/orderStatus.style.css";
@@ -8,7 +8,7 @@ import { getOrder } from "../../features/order/orderSlice";
 
 const MyPage = () => {
   const dispatch = useDispatch();
-  const { orderList } = useSelector((state) => state.order);
+  const { orderList, loading } = useSelector((state) => state.order);
   console.log(orderList);
 
   useEffect(() => {
@@ -23,15 +23,22 @@ const MyPage = () => {
     );
   }
   return (
-    <Container className="status-card-container">
-      {orderList.map((item) => (
-        <OrderStatusCard
-          orderItem={item}
-          className="status-card-container"
-          key={item._id}
-        />
-      ))}
-    </Container>
+    <>
+      {loading ? 
+        <div className="text-align-center">
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading..</span>
+          </Spinner>
+        </div> : <Container className="status-card-container">
+        {orderList.map((item) => (
+          <OrderStatusCard
+            orderItem={item}
+            className="status-card-container"
+            key={item._id}
+          />
+        ))}
+      </Container>}
+    </>
   );
 };
 
