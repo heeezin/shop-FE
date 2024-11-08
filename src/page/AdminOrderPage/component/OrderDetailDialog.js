@@ -35,9 +35,7 @@ console.log('selectedOrder',selectedOrder)
         </p>
         <p>
           연락처:
-          {`${
-            selectedOrder.contact.firstName + selectedOrder.contact.lastName
-          } ${selectedOrder.contact.contact}`}
+          {`${selectedOrder.contact}`}
         </p>
         <p>주문내역</p>
         <div className="overflow-x">
