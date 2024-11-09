@@ -7,6 +7,7 @@ import OrderDetailDialog from "./component/OrderDetailDialog";
 import OrderTable from "./component/OrderTable";
 import SearchBox from "../../common/component/SearchBox";
 import { clearSuccess } from "../../features/product/productSlice";
+import '../../common/style/pagination.css';
 import {
   getOrder,
   getOrderList,

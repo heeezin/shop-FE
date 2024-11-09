@@ -121,7 +121,7 @@ const Navbar = () => {
             <div onClick={() => navigate("/cart")} className="nav-icon">
               <FontAwesomeIcon icon={faShoppingBag} />
               {!isMobile && (
-                <span style={{ cursor: "pointer" }}>{`쇼핑백(${
+                <span style={{ cursor: "pointer" }}>{`장바구니(${
                   cartItemCount || 0
                 })`}</span>
               )}
@@ -144,7 +144,7 @@ const Navbar = () => {
 
       <div className="nav-logo">
         <Link to="/">
-          <img width={100} src="/image/hm-logo.png" alt="hm-logo.png" />
+          <img width={100} src="/image/29cm.png" alt="29cm" />
         </Link>
       </div>
       <div className="nav-menu-area">

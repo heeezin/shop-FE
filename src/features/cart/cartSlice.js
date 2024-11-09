@@ -124,8 +124,8 @@ const cartSlice = createSlice({
         state.loading = false;
         state.error = "";
         if (action.payload.status === "success") {
-        state.cartItemCount += 1;
-    }
+          state.cartItemCount += 1;
+        }
       })
       .addCase(addToCart.rejected, (state, action) => {
         state.loading = false;
@@ -138,14 +138,12 @@ const cartSlice = createSlice({
         state.loading = false;
         state.error = "";
         state.cartList = action.payload || [];
-        state.totalPrice = action.payload.reduce(
-          (total, item) => total + item.productId.price * item.qty,
-          0
-        );
-        state.cartItemCount = state.cartList.reduce(
-          (count, item) => count + item.qty,
-          0
-        );
+        state.totalPrice = state.cartList.length
+          ? state.cartList.reduce(
+              (total, item) => total + (item.productId.price * item.qty || 0),
+              0
+            )
+          : 0;
       })
       .addCase(getCartList.rejected, (state, action) => {
         state.loading = false;
@@ -157,7 +155,7 @@ const cartSlice = createSlice({
       .addCase(deleteCartItem.fulfilled, (state, action) => {
         state.loading = false;
         state.error = "";
-        state.cartList = action.payload.data; 
+        state.cartList = action.payload.data;
         state.cartItemCount = state.cartList.reduce(
           (count, item) => count + item.qty,
           0

@@ -30,10 +30,10 @@ const CartProductCard = ({ item }) => {
   return (
     <div className="product-card-cart">
       <Row>
-        <Col md={2} xs={12}>
-          <img src={item.productId.image} width={112} alt="product" />
+        <Col md={4} xs={12}>
+          <img src={item.productId.image} width="100%" alt="product" />
         </Col>
-        <Col md={10} xs={12}>
+        <Col md={8} xs={12}>
           <div className="display-flex space-between">
             <h3>{item.productId.name}</h3>
             <button
