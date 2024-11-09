@@ -11,7 +11,6 @@ const SearchBox = ({ searchQuery, setSearchQuery, placeholder, field }) => {
     if (event.key === "Enter") {
       const newQuery = { ...searchQuery, page: 1, [field]: event.target.value };
       setSearchQuery(newQuery);
-      console.log('ddddd',newQuery)
     }
   };
   return (

@@ -17,7 +17,6 @@ export const createOrder = createAsyncThunk(
   async (payload, { dispatch, rejectWithValue }) => {
     try {
       const res = await api.post("/order", payload);
-      console.log("post API Response:", res.data);
       dispatch(getCartQty());
       return {
         orderNum: res.data.orderNum,
@@ -35,27 +34,12 @@ export const getOrder = createAsyncThunk(
   async (query = {}, { rejectWithValue, dispatch }) => {
     try {
       const res = await api.get("/order/all", { params: { ...query } });
-      console.log("API response:", res.data);
       return { orders: res.data.orders, totalPageNum: res.data.totalPageNum };
     } catch (error) {
       dispatch(showToastMessage({ message: error.message, status: "error" }));
       return rejectWithValue(error.message);
     }
   }
-);
-
-export const getOrderList = createAsyncThunk(
-  "order/getOrderList"
-  // async (query, { rejectWithValue, dispatch }) => {
-  //   try {
-  //     const res = await api.get('/order/search',{params: {orderNum : query.orderNum}})
-  //     if (res.status !== 200) throw new Error(res.error);
-  //     return res.data.order? [res.data.order] : [];
-  //   } catch (error) {
-  //     dispatch(showToastMessage({ message: error.message, status: "error" }));
-  //     return rejectWithValue(error.message);
-  //   }
-  // }
 );
 
 export const updateOrder = createAsyncThunk(
@@ -84,7 +68,6 @@ const updateOrderStatus = (state, id, status) => {
     state.selectedOrder.status = status;
   }
 };
-// Order slice
 const orderSlice = createSlice({
   name: "order",
   initialState,

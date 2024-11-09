@@ -7,7 +7,6 @@ export const getProductList = createAsyncThunk(
   async (query, { rejectWithValue }) => {
     try {
       const res = await api.get("/product", {params: {...query}});
-      console.log('rrr',res)
       return res.data;
     } catch (error) {
       return rejectWithValue(error.error);
@@ -72,8 +71,6 @@ export const editProduct = createAsyncThunk(
     }
   }
 );
-
-// 슬라이스 생성
 const productSlice = createSlice({
   name: "products",
   initialState: {
@@ -107,7 +104,7 @@ const productSlice = createSlice({
       .addCase(createProduct.fulfilled, (state, action) => {
         state.loading = false;
         state.error = "";
-        state.success = true; //상품 생성을 성공하면 다이얼로그 닫고, 실패는 메시지 다이얼로그 보여주고 닫진 않음
+        state.success = true; 
       })
       .addCase(createProduct.rejected, (state, action) => {
         state.loading = false;

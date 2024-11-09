@@ -44,8 +44,6 @@ export const getCartList = createAsyncThunk(
     if (!state.user.user) return;
     try {
       const res = await api.get("/cart");
-      console.log("getCartList", res.data.data);
-
       return res.data.data;
     } catch (error) {
       return rejectWithValue(error.error);
@@ -65,7 +63,6 @@ export const deleteCartItem = createAsyncThunk(
         })
       );
       dispatch(getCartList());
-      console.log("deleteCartItem", res.data);
       return res.data;
     } catch (error) {
       return rejectWithValue(error.error);
@@ -113,7 +110,6 @@ const cartSlice = createSlice({
       state.cartItemCount = 0;
       state.totalPrice = 0;
     },
-    // You can still add reducers here for non-async actions if necessary
   },
   extraReducers: (builder) => {
     builder

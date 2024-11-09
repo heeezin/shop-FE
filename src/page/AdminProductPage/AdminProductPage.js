@@ -45,17 +45,14 @@ const AdminProductPage = () => {
     if(searchQuery.name===''){
       delete searchQuery.name
     }
-    console.log(searchQuery)
     const params = new URLSearchParams(searchQuery) //객체를 쿼리 형태로
     const query = params.toString()
     navigate('?'+query)
-    console.log('qq',query)
   }, [searchQuery]);
 
   const deleteItem = (id) => {
     //아이템 삭제하기
     dispatch(deleteProduct({id, page: searchQuery.page }))
-    console.log('delete id',id)
   };
 
   const openEditForm = (product) => {
@@ -74,11 +71,8 @@ const AdminProductPage = () => {
   };
 
   const handlePageClick = ({ selected }) => {
-    //  쿼리에 페이지값 바꿔주기
     setSearchQuery({...searchQuery, page: selected + 1})
   };
-  //searchbox에서 검색어를 읽어온다. -> 엔터 치면 searchQuery객체가 업데이트 됨 {name: 스트레이트 팬츠}
-  //searchQuery객체안에 아이템 기준으로 url을 새로 생성해서 호출 &name=스트레이트+팬츠 => url쿼리 읽어오기 => url쿼리 기준으로 BE에 검색조건과 함께 호출한다.
 
   return (
     <div className="locate-center">

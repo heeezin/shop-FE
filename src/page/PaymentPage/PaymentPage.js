@@ -29,8 +29,6 @@ const PaymentPage = () => {
     zip: "",
   });
   const {cartList, totalPrice} = useSelector(state=>state.cart)
-  console.log(shipInfo)
-
   useEffect(() => {
     // 오더번호를 받으면 어디로 갈까?
     if(firstLoading) { //처음 호출될때 성공페이지 넘어가는거막기
