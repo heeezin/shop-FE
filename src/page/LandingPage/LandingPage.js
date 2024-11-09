@@ -44,7 +44,7 @@ const LandingPage = () => {
             if (!acc[detail.name]) {
               acc[detail.name] = [];
             }
-            acc[detail.name].push(`${detail.size} 사이즈 잔여(${detail.stock}개)`);
+            acc[detail.name].push(`${detail.size} 사이즈 재고(${detail.stock}개)`);
           });
 
           return acc;

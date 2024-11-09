@@ -5,7 +5,7 @@ const Alert = ({ show, onClose, onDontShowAgain, message }) => {
     return (
         <Modal show={show} onHide={onClose}>
             <Modal.Header closeButton>
-                <Modal.Title>품절 임박</Modal.Title>
+                <Modal.Title>※ 품절 이슈</Modal.Title>
             </Modal.Header>
             <Modal.Body dangerouslySetInnerHTML={{ __html: message }} />
             <Modal.Footer>

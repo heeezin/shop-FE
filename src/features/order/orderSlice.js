@@ -3,7 +3,6 @@ import { getCartQty } from "../cart/cartSlice";
 import api from "../../utils/api";
 import { showToastMessage } from "../common/uiSlice";
 
-// Define initial state
 const initialState = {
   orderList: [],
   orderNum: "",
@@ -13,7 +12,6 @@ const initialState = {
   totalPageNum: 1,
 };
 
-// Async thunks
 export const createOrder = createAsyncThunk(
   "order/createOrder",
   async (payload, { dispatch, rejectWithValue }) => {
@@ -64,7 +62,7 @@ export const updateOrder = createAsyncThunk(
   "order/updateOrder",
   async ({ id, status }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.put(`/order/${id}/status`, { status }); // 주문 ID와 새로운 상태를 보냄
+      const res = await api.put(`/order/${id}/status`, { status }); 
       dispatch(
         showToastMessage({
           message: "오더 상태가 변경되었습니다.",
