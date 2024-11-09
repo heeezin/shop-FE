@@ -1,34 +1,84 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ProductCard from "./components/ProductCard";
 import { Row, Col, Container, Spinner } from "react-bootstrap";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getProductList } from "../../features/product/productSlice";
 import ReactPaginate from "react-paginate";
+import Alert from "../../common/component/Alert";
 
 const PAGE_SIZE = 12;
 
 const LandingPage = () => {
   const dispatch = useDispatch();
-
-  const {productList,loading,totalPageNum} = useSelector((state) => state.product);
-  const [query,setQuery] = useSearchParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { productList, loading, totalPageNum } = useSelector((state) => state.product);
+  const [query, setQuery] = useSearchParams();
   const name = query.get("name") || "";
   const page = query.get("page") || 1;
-  console.log(page)
+
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
-    dispatch(
-      getProductList({ name, page, pageSize: PAGE_SIZE })
-    );
-  }, [query]);
+    const dontShowAgain = sessionStorage.getItem("dontShowAlert");
+    if (dontShowAgain) return;
+
+    if (!location.state?.hasShownAlert && productList && productList.length > 0) {
+      const lowStockProducts = productList.filter(product => {
+        return product.stock && Object.values(product.stock).some(stock => stock <= 1);
+      });
+
+      if (lowStockProducts.length > 0) {
+        const groupedMessages = lowStockProducts.reduce((acc, product) => {
+          const lowStockDetails = Object.entries(product.stock)
+            .filter(([size, stock]) => stock <= 1)
+            .map(([size, stock]) => ({
+              name: product.name,
+              size,
+              stock,
+            }));
+
+          lowStockDetails.forEach(detail => {
+            if (!acc[detail.name]) {
+              acc[detail.name] = [];
+            }
+            acc[detail.name].push(`${detail.size} 사이즈 잔여(${detail.stock}개)`);
+          });
+
+          return acc;
+        }, {});
+
+        const formattedMessage = Object.entries(groupedMessages)
+          .map(([name, details]) => `<strong>${name}</strong>: ${details.join(', ')}`)
+          .join('<br />');
+
+        setAlertMessage(formattedMessage);
+        setShowAlert(true);
+
+        navigate(location.pathname, { state: { hasShownAlert: true } });
+      }
+    }
+  }, [productList, location, navigate]);
+
+  useEffect(() => {
+    dispatch(getProductList({ name, page, pageSize: PAGE_SIZE }));
+  }, [dispatch, query, name, page]);
+
   const handlePageClick = ({ selected }) => {
     setQuery({ name, page: selected + 1 });
   };
+
+  const handleDontShowAgain = () => {
+    sessionStorage.setItem("dontShowAlert", "true");
+    setShowAlert(false);
+  };
+
   return (
     <Container>
       <Row>
-      {loading ? (
+        {loading ? (
           <div className="text-align-center">
             <Spinner animation="border" role="status">
               <span className="visually-hidden">Loading..</span>
@@ -54,8 +104,8 @@ const LandingPage = () => {
         nextLabel="next >"
         onPageChange={handlePageClick}
         pageRangeDisplayed={5}
-        pageCount={totalPageNum} 
-        forcePage={page - 1} 
+        pageCount={totalPageNum}
+        forcePage={page - 1}
         previousLabel="< previous"
         renderOnZeroPageCount={null}
         pageClassName="page-item"
@@ -71,8 +121,13 @@ const LandingPage = () => {
         activeClassName="active"
         className="display-center list-style-none"
       />
+      <Alert
+        show={showAlert}
+        onClose={() => setShowAlert(false)}
+        onDontShowAgain={handleDontShowAgain}
+        message={alertMessage}
+      />
     </Container>
-    
   );
 };
 
