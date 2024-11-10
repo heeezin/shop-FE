@@ -38,7 +38,7 @@ const CartProductCard = ({ item }) => {
         </Col>
         <Col md={8} xs={12}>
           <div className="display-flex space-between">
-            <h3>{item.productId.name || "제품명 없음"}</h3>
+            <h3>{item.productId.name || " "}</h3>
             <button
               className="trash-button"
               onClick={() => deleteCart(item.productId._id, item.size)}
@@ -56,7 +56,7 @@ const CartProductCard = ({ item }) => {
           <div>
             <strong>₩ {currencyFormat(item.productId.price || 0)}</strong>
           </div>
-          <div>Size: {item.size || "N/A"}</div>
+          <div>Size: {item.size || " "}</div>
           <div>Total: ₩ {currencyFormat((item.productId.price || 0) * (item.qty || 1))}</div>
           <div>
             Quantity:
