@@ -1,0 +1,37 @@
+.productCard {
+    padding-bottom: 15px;
+}
+.card {
+    border: 1px solid #ddd;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    }
+
+    .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .card img {
+    width: 100%;
+    height: auto;
+    display: block;
+    }
+
+    .card div {
+    padding: 7px 0;
+    font-size: 16px;
+    }
+
+    .card div:first-of-type {
+
+    }
+
+    .card div:last-of-type {
+        padding: 0;
+    color: #333; 
+    font-size: 18px;
+    font-weight: bold;
+
+}

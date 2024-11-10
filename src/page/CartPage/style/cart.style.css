@@ -47,12 +47,6 @@
     flex-direction: column;
     align-items: flex-start;
 }
-
-.display-flex {
-    flex-direction: column;
-    align-items: flex-start;
-}
-
 .trash-button {
     margin-top: 10px;
 }

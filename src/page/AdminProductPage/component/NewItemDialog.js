@@ -68,7 +68,6 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog,currentPage }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log('fordata',formData)
     if(stock.length === 0) return setStockError(true)
     const totalStock = stock.reduce((total,item)=>{
       return {...total,[item[0]]:parseInt(item[1])}
