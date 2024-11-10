@@ -5,25 +5,17 @@ import { useLocation } from "react-router-dom";
 import { currencyFormat } from "../../../utils/number";
 import { useSelector } from "react-redux";
 
-const OrderReceipt = ({cartList, totalPrice}) => {
+const OrderReceipt = ({ cartList, totalPrice }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const {loading} = useSelector((state)=> state.order);
-  useEffect(() => {
-    let isMounted = true;
-    if (loading) {
-      setTimeout(() => {
-        if (isMounted) {
-        }
-      }, 1000);
-    }
-    return () => {
-      isMounted = false;
-    };
-  }, [loading]);
+  const { loading } = useSelector((state) => state.order);
+
+  const isDataValid = cartList.length > 0 && !isNaN(totalPrice);
+
   return (
     <div className="receipt-container">
       <h3 className="receipt-title">주문 내역</h3>
+
       {loading ? (
         <div className="text-align-center">
           <Spinner animation="border" role="status">
@@ -31,26 +23,31 @@ const OrderReceipt = ({cartList, totalPrice}) => {
           </Spinner>
         </div>
       ) : (
-        <ul className="receipt-list">
-          {cartList.length > 0 &&
-            cartList.map((item, index) => (
+        isDataValid && (
+          <ul className="receipt-list">
+            {cartList.map((item, index) => (
               <li key={index}>
                 <div className="display-flex space-between">
                   <div>{item.productId.name}</div>
-                  <div>₩ {currencyFormat(item.productId.price * item.qty)}</div>
+                  <div>
+                    ₩ {currencyFormat(item.productId.price * item.qty)}
+                  </div>
                 </div>
               </li>
             ))}
-        </ul>
+          </ul>
+        )
       )}
-      <div className="display-flex space-between receipt-title">
-        <div>
-          <strong>Total:</strong>
+      {!loading && isDataValid && (
+        <div className="display-flex space-between receipt-title">
+          <div>
+            <strong>Total:</strong>
+          </div>
+          <div>
+            <strong>₩ {currencyFormat(totalPrice)}</strong>
+          </div>
         </div>
-        <div>
-          <strong>₩ {currencyFormat(totalPrice)}</strong>
-        </div>
-      </div>
+      )}
       {location.pathname.includes("/cart") && cartList.length > 0 && (
         <Button
           variant="dark"
