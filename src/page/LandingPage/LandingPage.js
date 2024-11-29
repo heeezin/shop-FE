@@ -17,10 +17,10 @@ const LandingPage = () => {
   const [query, setQuery] = useSearchParams();
   const name = query.get("name") || "";
   const page = query.get("page") || 1;
-
+  const category = query.get("category") || ""; 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
-
+  console.log('category',category)
   useEffect(() => {
     const dontShowAgain = sessionStorage.getItem("dontShowAlert");
     if (dontShowAgain) return;
@@ -63,13 +63,14 @@ const LandingPage = () => {
   }, [productList, location, navigate]);
 
   useEffect(() => {
-    dispatch(getProductList({ name, page, pageSize: PAGE_SIZE }));
-  }, [dispatch, query, name, page]);
+    dispatch(getProductList({ name, page, category, pageSize: PAGE_SIZE }));
+    console.log("Fetching products with params:", { name, page, category, pageSize: PAGE_SIZE });
+
+  }, [dispatch, query, name, page, category]);
 
   const handlePageClick = ({ selected }) => {
-    setQuery({ name, page: selected + 1 });
+    setQuery({ name, category, page: selected + 1 });
   };
-
   const handleDontShowAgain = () => {
     sessionStorage.setItem("dontShowAlert", "true");
     setShowAlert(false);
@@ -86,7 +87,7 @@ const LandingPage = () => {
           </div>
         ) : productList && productList.length > 0 ? (
           productList.map((item) => (
-            <Col md={3} sm={12} key={item._id} className="productCard">
+            <Col md={4} sm={12} key={item._id} className="productCard">
               <ProductCard item={item} />
             </Col>
           ))
@@ -101,12 +102,12 @@ const LandingPage = () => {
         )}
       </Row>
       <ReactPaginate
-        nextLabel="next >"
+        nextLabel=">"
         onPageChange={handlePageClick}
         pageRangeDisplayed={5}
         pageCount={totalPageNum}
         forcePage={page - 1}
-        previousLabel="< previous"
+        previousLabel="<"
         renderOnZeroPageCount={null}
         pageClassName="page-item"
         pageLinkClassName="page-link"

@@ -96,12 +96,12 @@ const AdminProductPage = () => {
           openEditForm={openEditForm}
         />
         <ReactPaginate
-          nextLabel="next >"
+          nextLabel=">"
           onPageChange={handlePageClick}
           pageRangeDisplayed={5}
           pageCount={totalPageNum}
           forcePage={searchQuery.page - 1}
-          previousLabel="< previous"
+          previousLabel="<"
           renderOnZeroPageCount={null}
           pageClassName="page-item"
           pageLinkClassName="page-link"

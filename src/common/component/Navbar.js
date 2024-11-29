@@ -24,19 +24,20 @@ const Navbar = () => {
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const { show, message, openConfirm, handleConfirm, closeConfirm } = useConfirm();
+  let navigate = useNavigate();
+  let [width, setWidth] = useState(0);
 
   const menuList = [
-    "여성",
-    "Divided",
-    "남성",
-    "신생아/유아",
-    "아동",
-    "H&M HOME",
-    "Sale",
-    "지속가능성",
+    "Top",
+    "Dress",
+    "Pants",
+    "Bag",
+    "Shoes",
+    "Acc",
   ];
-  let [width, setWidth] = useState(0);
-  let navigate = useNavigate();
+  const onCategoryclick = (category) => {
+    navigate(`/?category=${category}`);
+  }
   const onCheckEnter = (event) => {
     if (event.key === "Enter") {
       if (event.target.value === "") {
@@ -84,7 +85,7 @@ const Navbar = () => {
 
         <div className="side-menu-list" id="menu-list">
           {menuList.map((menu, index) => (
-            <button key={index}>{menu}</button>
+            <button key={index} onClick={()=> onCategoryclick(menu)}>{menu}</button>
           ))}
         </div>
       </div>
@@ -93,78 +94,84 @@ const Navbar = () => {
           Admin page
         </Link>
       )}
-      <div className="nav-header">
-        <div className="burger-menu hide">
-          <FontAwesomeIcon icon={faBars} onClick={() => setWidth(250)} />
+      <div className="nav-wrap">
+      <div className="nav-logo">
+          <Link to="/">
+            <img width={100} src="/image/29cm.png" alt="29cm" />
+          </Link>
         </div>
-        <div>
-          <div className="display-flex">
-            {user ? (
-              <div className="nav-icon">
-                <FontAwesomeIcon icon={faUser} />
+      <div className="nav-menu-area">
+          <ul className="menu">
+            {menuList.map((menu, index) => (
+              <li key={index}>
+                <a onClick={()=>onCategoryclick(menu)}>{menu}</a>
+              </li>
+            ))}
+          </ul>
+          {!isMobile && ( // admin페이지에서 같은 search-box스타일을 쓰고있음 그래서 여기서 서치박스 안보이는것 처리를 해줌
+            <div className="search-box landing-search-box ">
+              <FontAwesomeIcon icon={faSearch} />
+              <input
+                type="text"
+                placeholder="Search Product"
+                onKeyPress={onCheckEnter}
+              />
+            </div>
+          )}
+        </div>
+        <div className="nav-header">
+          
+          <div>
+            <div className="display-flex">
+              <div className="burger-menu hide">
+              <FontAwesomeIcon icon={faBars} onClick={() => setWidth(250)} />
+              </div>
+              {user ? (
+                <div className="nav-icon">
+                  <FontAwesomeIcon icon={faUser} />
+                  {!isMobile && (
+                    <span style={{ cursor: "pointer" }} onClick={handleLogout}>Logout</span>
+                  )}
+                  <Confirm
+                    show={show}
+                    onConfirm={handleConfirm}
+                    onCancel={closeConfirm}
+                    message={message}
+                  />
+                </div>
+              ) : (
+                <div onClick={() => navigate("/login")} className="nav-icon">
+                  <FontAwesomeIcon icon={faUser} />
+                  {!isMobile && <span style={{ cursor: "pointer" }}>Login</span>}
+                </div>
+              )}
+              <div onClick={() => navigate("/cart")} className="nav-icon">
+                <FontAwesomeIcon icon={faShoppingBag} />
                 {!isMobile && (
-                  <span style={{ cursor: "pointer" }} onClick={handleLogout}>로그아웃</span>
+                  <span style={{ cursor: "pointer" }}>{`Cart(${
+                    cartItemCount || 0
+                  })`}</span>
                 )}
-                <Confirm
-                  show={show}
-                  onConfirm={handleConfirm}
-                  onCancel={closeConfirm}
-                  message={message}
-                />
               </div>
-            ) : (
-              <div onClick={() => navigate("/login")} className="nav-icon">
-                <FontAwesomeIcon icon={faUser} />
-                {!isMobile && <span style={{ cursor: "pointer" }}>로그인</span>}
+              <div
+                onClick={() => navigate("/account/purchase")}
+                className="nav-icon"
+              >
+                <FontAwesomeIcon icon={faBox} />
+                {!isMobile && <span style={{ cursor: "pointer" }}>My Order</span>}
               </div>
-            )}
-            <div onClick={() => navigate("/cart")} className="nav-icon">
-              <FontAwesomeIcon icon={faShoppingBag} />
-              {!isMobile && (
-                <span style={{ cursor: "pointer" }}>{`장바구니(${
-                  cartItemCount || 0
-                })`}</span>
+              {isMobile && (
+                <div className="nav-icon" onClick={() => setShowSearchBox(true)}>
+                  <FontAwesomeIcon icon={faSearch} />
+                </div>
               )}
             </div>
-            <div
-              onClick={() => navigate("/account/purchase")}
-              className="nav-icon"
-            >
-              <FontAwesomeIcon icon={faBox} />
-              {!isMobile && <span style={{ cursor: "pointer" }}>내 주문</span>}
-            </div>
-            {isMobile && (
-              <div className="nav-icon" onClick={() => setShowSearchBox(true)}>
-                <FontAwesomeIcon icon={faSearch} />
-              </div>
-            )}
           </div>
         </div>
-      </div>
-
-      <div className="nav-logo">
-        <Link to="/">
-          <img width={100} src="/image/29cm.png" alt="29cm" />
-        </Link>
-      </div>
-      <div className="nav-menu-area">
-        <ul className="menu">
-          {menuList.map((menu, index) => (
-            <li key={index}>
-              <a href="#">{menu}</a>
-            </li>
-          ))}
-        </ul>
-        {!isMobile && ( // admin페이지에서 같은 search-box스타일을 쓰고있음 그래서 여기서 서치박스 안보이는것 처리를 해줌
-          <div className="search-box landing-search-box ">
-            <FontAwesomeIcon icon={faSearch} />
-            <input
-              type="text"
-              placeholder="제품검색"
-              onKeyPress={onCheckEnter}
-            />
-          </div>
-        )}
+        
+        
+        
+        
       </div>
     </div>
   );

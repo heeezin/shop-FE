@@ -51,7 +51,7 @@ const ProductDetail = () => {
       />
     );
   return (
-    <Container className="product-detail-card">
+    <Container className="product-detail-card" style={{paddingBottom: "30px"}}>
       <Row>
         <Col sm={6}>
           <img src={selectedProduct.image} className="w-100" alt="image" />
