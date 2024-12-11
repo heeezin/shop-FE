@@ -37,7 +37,7 @@ body{
   gap: 26px;
 }
 .nav-menu-area li {cursor: pointer;}
-.nav-menu-area li:hover {
+.nav-menu-area li:hover a{
   box-sizing: border-box;
   border-bottom: 3px solid black;
 }
@@ -92,7 +92,15 @@ body{
   border:none !important;
   margin-bottom: 10px;
 }
-
+.swiper {height: 450px; margin-bottom: 20px;}
+.swiper-slide img {width: 100%;}
+.swiper-button-prev, .swiper-button-next {
+  color: gray !important;
+}
+.swiper-button-prev:after, .swiper-button-next:after {
+  font-size: 30px !important;
+}
+.swiper-pagination-bullet-active {background: #000 !important;}
 .choice{
   font-size:11px;
   color: #63786a;
@@ -219,7 +227,7 @@ body{
 
 @media screen and (max-width: 63rem) {
   body {
-    padding: 1rem 0.2rem;
+    padding: 1rem 0rem;
   }
   .hide {
     visibility:visible;

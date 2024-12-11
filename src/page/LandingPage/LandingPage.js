@@ -6,6 +6,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProductList } from "../../features/product/productSlice";
 import ReactPaginate from "react-paginate";
 import Alert from "../../common/component/Alert";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Scrollbar, A11y, Autoplay } from 'swiper/modules';
+import 'swiper/css'; 
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/autoplay';
+import 'swiper/css/controller';
 
 const PAGE_SIZE = 12;
 
@@ -77,58 +84,75 @@ const LandingPage = () => {
   };
 
   return (
-    <Container>
-      <Row>
-        {loading ? (
-          <div className="text-align-center">
-            <Spinner animation="border" role="status">
-              <span className="visually-hidden">Loading..</span>
-            </Spinner>
-          </div>
-        ) : productList && productList.length > 0 ? (
-          productList.map((item) => (
-            <Col md={4} sm={12} key={item._id} className="productCard">
-              <ProductCard item={item} />
-            </Col>
-          ))
-        ) : (
-          <div className="text-align-center empty-bag">
-            {name === "" ? (
-              <h2>등록된 상품이 없습니다!</h2>
-            ) : (
-              <h2>{name}과 일치한 상품이 없습니다!</h2>
-            )}
-          </div>
-        )}
-      </Row>
-      <ReactPaginate
-        nextLabel=">"
-        onPageChange={handlePageClick}
-        pageRangeDisplayed={5}
-        pageCount={totalPageNum}
-        forcePage={page - 1}
-        previousLabel="<"
-        renderOnZeroPageCount={null}
-        pageClassName="page-item"
-        pageLinkClassName="page-link"
-        previousClassName="page-item"
-        previousLinkClassName="page-link"
-        nextClassName="page-item"
-        nextLinkClassName="page-link"
-        breakLabel="..."
-        breakClassName="page-item"
-        breakLinkClassName="page-link"
-        containerClassName="pagination"
-        activeClassName="active"
-        className="display-center list-style-none"
-      />
-      <Alert
-        show={showAlert}
-        onClose={() => setShowAlert(false)}
-        onDontShowAgain={handleDontShowAgain}
-        message={alertMessage}
-      />
-    </Container>
+    <>
+      <Swiper 
+          modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
+          slidesPerView={1}
+          pagination={{ clickable: true }}
+          navigation={true}
+          speed={1000}
+          scrollbar={{ draggable: true }}
+          autoplay={{ delay: 2000, disableOnInteraction: true }}
+          loop={true}
+          keyboard={true}
+        >
+          <SwiperSlide><img src="/image/main1.jpg" alt="main1"/></SwiperSlide>
+          <SwiperSlide><img src="/image/main2.jpg" alt="main2"/></SwiperSlide>
+          <SwiperSlide><img src="/image/main3.jpg" alt="main3"/></SwiperSlide>
+        </Swiper> 
+      <Container>
+        <Row>
+          {loading ? (
+            <div className="text-align-center">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading..</span>
+              </Spinner>
+            </div>
+          ) : productList && productList.length > 0 ? (
+            productList.map((item) => (
+              <Col md={4} sm={12} key={item._id} className="productCard">
+                <ProductCard item={item} />
+              </Col>
+            ))
+          ) : (
+            <div className="text-align-center empty-bag">
+              {name === "" ? (
+                <h2>등록된 상품이 없습니다!</h2>
+              ) : (
+                <h2>{name}과 일치한 상품이 없습니다!</h2>
+              )}
+            </div>
+          )}
+        </Row>
+        <ReactPaginate
+          nextLabel=">"
+          onPageChange={handlePageClick}
+          pageRangeDisplayed={5}
+          pageCount={totalPageNum}
+          forcePage={page - 1}
+          previousLabel="<"
+          renderOnZeroPageCount={null}
+          pageClassName="page-item"
+          pageLinkClassName="page-link"
+          previousClassName="page-item"
+          previousLinkClassName="page-link"
+          nextClassName="page-item"
+          nextLinkClassName="page-link"
+          breakLabel="..."
+          breakClassName="page-item"
+          breakLinkClassName="page-link"
+          containerClassName="pagination"
+          activeClassName="active"
+          className="display-center list-style-none"
+        />
+        <Alert
+          show={showAlert}
+          onClose={() => setShowAlert(false)}
+          onDontShowAgain={handleDontShowAgain}
+          message={alertMessage}
+        />
+      </Container>
+    </>
   );
 };
 
