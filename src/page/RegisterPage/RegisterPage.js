@@ -114,7 +114,7 @@ const RegisterPage = () => {
             checked={formData.policy}
           />
         </Form.Group>
-        <Button variant="danger" type="submit" disabled={loading}>
+        <Button className="bg-dark" type="submit" disabled={loading}>
           {loading ? 'Signing up..' : 'Sign up'}
         </Button>
       </Form>

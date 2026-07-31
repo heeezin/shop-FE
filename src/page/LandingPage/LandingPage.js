@@ -84,7 +84,7 @@ const LandingPage = () => {
   };
 
   return (
-    <>
+    <main className="main">
       <Swiper 
           modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
           slidesPerView={1}
@@ -96,7 +96,7 @@ const LandingPage = () => {
           loop={true}
           keyboard={true}
         >
-          <SwiperSlide><img src="/image/main1.jpg" alt="main1"/></SwiperSlide>
+          <SwiperSlide><img src="/image/main1.png" alt="main1"/></SwiperSlide>
           <SwiperSlide><img src="/image/main2.jpg" alt="main2"/></SwiperSlide>
           <SwiperSlide><img src="/image/main3.jpg" alt="main3"/></SwiperSlide>
         </Swiper> 
@@ -152,7 +152,7 @@ const LandingPage = () => {
           message={alertMessage}
         />
       </Container>
-    </>
+    </main>
   );
 };
 

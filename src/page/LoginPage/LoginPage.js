@@ -65,7 +65,7 @@ const Login = () => {
             />
           </Form.Group>
           <div className="display-space-between login-button-area">
-            <Button variant="danger" type="submit" disabled={loading}>
+            <Button className="bg-dark" type="submit" disabled={loading}>
               {loading ? "Logging in.." : "Login"}
             </Button>
             <div>
