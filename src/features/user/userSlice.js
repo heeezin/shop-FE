@@ -14,7 +14,7 @@ export const loginWithEmail = createAsyncThunk(
       dispatch(showToastMessage({message: "로그인 되었습니다!", status:"login success"}))
       return res.data.user
     } catch (error) {
-      // dispatch(showToastMessage({message:"로그인 실패 했습니다.", status:"error"}))
+      dispatch(showToastMessage({message:"로그인 실패 했습니다.", status:"error"}))
       return rejectWithValue(error.message)
     }
   }
