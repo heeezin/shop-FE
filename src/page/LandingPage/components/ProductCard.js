@@ -11,8 +11,18 @@ const ProductCard = ({ item }) => {
   return (
     <div className="card" style={{background: "none"}} onClick={() => showProduct(item._id)}>
       <img src={item?.image} alt={item?.image} />
-      <div>{item?.name}</div>
-      <div>₩ {currencyFormat(item?.price)}</div>
+      <div className="flex justify-between px-1">
+        <div>
+          <div>{item?.name}</div>
+          <div>₩ {currencyFormat(item?.price)}</div>
+        </div>
+        <button
+          aria-hidden="true"
+          className="text-3xl font-light text-neutral-400"
+        >
+          ♡
+        </button>
+      </div>
     </div>
   );
 };

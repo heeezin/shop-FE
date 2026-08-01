@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
 import ProductCard from "./components/ProductCard";
-import { Row, Col, Container, Spinner } from "react-bootstrap";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getProductList } from "../../features/product/productSlice";
 import ReactPaginate from "react-paginate";
 import Alert from "../../common/component/Alert";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Scrollbar, A11y, Autoplay } from 'swiper/modules';
-import 'swiper/css'; 
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import 'swiper/css/autoplay';
-import 'swiper/css/controller';
+import { Spinner } from "react-bootstrap";
+import HeroSlider from "./components/HeroSlider";
+import ProductColumn from "./components/ProductColumn";
+
 
 const PAGE_SIZE = 12;
 
@@ -27,7 +23,6 @@ const LandingPage = () => {
   const category = query.get("category") || ""; 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
-  console.log('category',category)
   useEffect(() => {
     const dontShowAgain = sessionStorage.getItem("dontShowAlert");
     if (dontShowAgain) return;
@@ -71,8 +66,6 @@ const LandingPage = () => {
 
   useEffect(() => {
     dispatch(getProductList({ name, page, category, pageSize: PAGE_SIZE }));
-    console.log("Fetching products with params:", { name, page, category, pageSize: PAGE_SIZE });
-
   }, [dispatch, query, name, page, category]);
 
   const handlePageClick = ({ selected }) => {
@@ -82,76 +75,115 @@ const LandingPage = () => {
     sessionStorage.setItem("dontShowAlert", "true");
     setShowAlert(false);
   };
+  const firstColumnProducts = productList?.slice(0, 3) || [];
+  const secondColumnProducts = productList?.slice(3, 6) || [];
+    console.log(productList)
 
   return (
-    <main className="main">
-      <Swiper 
-          modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
-          slidesPerView={1}
-          pagination={{ clickable: true }}
-          navigation={true}
-          speed={1000}
-          scrollbar={{ draggable: true }}
-          autoplay={{ delay: 2000, disableOnInteraction: true }}
-          loop={true}
-          keyboard={true}
-        >
-          <SwiperSlide><img src="/image/main1.png" alt="main1"/></SwiperSlide>
-          <SwiperSlide><img src="/image/main2.jpg" alt="main2"/></SwiperSlide>
-          <SwiperSlide><img src="/image/main3.jpg" alt="main3"/></SwiperSlide>
-        </Swiper> 
-      <Container>
-        <Row>
-          {loading ? (
-            <div className="text-align-center">
-              <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading..</span>
-              </Spinner>
-            </div>
-          ) : productList && productList.length > 0 ? (
-            productList.map((item) => (
-              <Col md={4} sm={12} key={item._id} className="productCard">
-                <ProductCard item={item} />
-              </Col>
-            ))
-          ) : (
-            <div className="text-align-center empty-bag">
-              {name === "" ? (
-                <h2>등록된 상품이 없습니다!</h2>
-              ) : (
-                <h2>{name}과 일치한 상품이 없습니다!</h2>
-              )}
-            </div>
+    <main className="min-h-screen bg-white text-black">
+      
+      {!name && !category && (
+        <section className="grid border-t border-neutral-200 lg:grid-cols-[1.1fr_1.5fr]">
+          <div className="min-w-0 border-b border-neutral-200 lg:border-b-0 lg:border-r">
+            <HeroSlider />
+          </div>
+
+          <div className="grid min-w-0 md:grid-cols-2">
+            <ProductColumn
+              title="이번 주 주목할 컬렉션"
+              description="새롭게 입고된 인기 상품을 만나보세요."
+              image="/image/main2.jpg"
+              products={firstColumnProducts}
+            />
+
+            <ProductColumn
+              title="새로운 라이프스타일"
+              description="일상을 새롭게 만들어 줄 아이템을 소개합니다."
+              image="/image/main3.jpg"
+              products={secondColumnProducts}
+            />
+          </div>
+        </section>
+      )}
+
+      <section className="mx-auto max-w-[1600px] px-4 pb-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mb-8 flex items-end justify-between border-b-2 border-black pb-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">
+              Shop
+            </p>
+
+            <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
+              {name
+                ? `"${name}" 검색 결과`
+                : category
+                  ? `${category.charAt(0).toUpperCase() + category.slice(1)}`
+                  : "전체"}
+            </h1>
+          </div>
+
+          {!loading && (
+            <span className="text-sm text-neutral-500">
+              {productList?.length || 0} items
+            </span>
           )}
-        </Row>
-        <ReactPaginate
-          nextLabel=">"
-          onPageChange={handlePageClick}
-          pageRangeDisplayed={5}
-          pageCount={totalPageNum}
-          forcePage={page - 1}
-          previousLabel="<"
-          renderOnZeroPageCount={null}
-          pageClassName="page-item"
-          pageLinkClassName="page-link"
-          previousClassName="page-item"
-          previousLinkClassName="page-link"
-          nextClassName="page-item"
-          nextLinkClassName="page-link"
-          breakLabel="..."
-          breakClassName="page-item"
-          breakLinkClassName="page-link"
-          containerClassName="pagination"
-          activeClassName="active"
-          className="display-center list-style-none"
-        />
-        <Alert
-          show={showAlert}
-          onClose={() => setShowAlert(false)}
-          onDontShowAgain={handleDontShowAgain}
-          message={alertMessage}
-        />
-      </Container>
+        </div>
+
+        {loading ? (
+          <div className="flex min-h-80 items-center justify-center">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </div>
+        ) : productList?.length > 0 ? (
+          <div className="grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-5 md:grid-cols-3 lg:grid-cols-4 xl:gap-x-6">
+            {productList.map((item) => (
+              <ProductCard key={item._id} item={item} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex min-h-80 items-center justify-center text-center">
+            <h2 className="text-xl font-semibold">
+              {name
+                ? `"${name}"과 일치하는 상품이 없습니다.`
+                : "등록된 상품이 없습니다."}
+            </h2>
+          </div>
+        )}
+
+        {totalPageNum > 1 && (
+          <ReactPaginate
+            nextLabel=">"
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={5}
+            pageCount={totalPageNum}
+            forcePage={page - 1}
+            previousLabel="<"
+            renderOnZeroPageCount={null}
+            breakLabel="..."
+            containerClassName="mt-16 flex list-none items-center justify-center gap-1"
+            pageClassName="flex"
+            pageLinkClassName="flex h-10 min-w-10 cursor-pointer items-center justify-center px-3 text-sm transition text-gray-500 hover:text-black"
+            previousClassName="flex"
+            previousLinkClassName="flex text-gray-500 h-10 min-w-10 cursor-pointer items-center justify-center border border-neutral-300 px-3 transition hover:border-black"
+            nextClassName="flex "
+            nextLinkClassName="flex text-black h-10 min-w-10 cursor-pointer items-center justify-center border border-neutral-300 px-3 transition hover:border-black"
+            breakClassName="flex"
+            breakLinkClassName="flex h-10 min-w-10 items-center justify-center hover:text-black"
+            activeClassName="font-bold text-black"
+            disabledClassName="pointer-events-none opacity-30"
+            disabledLinkClassName="text-gray-500 cursor-not-allowed"
+            activeLinkClassName="font-bold text-black"
+          />
+        )}
+      </section>
+
+      <Alert
+        show={showAlert}
+        onClose={() => setShowAlert(false)}
+        onDontShowAgain={handleDontShowAgain}
+        message={alertMessage}
+      />
     </main>
   );
 };

@@ -92,8 +92,6 @@ body{
   border:none !important;
   margin-bottom: 10px;
 }
-.swiper {height: 450px; margin-bottom: 20px;}
-.swiper-slide img {width: 100%;}
 .swiper-button-prev, .swiper-button-next {
   color: gray !important;
 }

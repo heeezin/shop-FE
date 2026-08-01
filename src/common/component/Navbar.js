@@ -36,7 +36,7 @@ const Navbar = () => {
     "Acc",
   ];
   const onCategoryclick = (category) => {
-    navigate(`/?category=${category}`);
+    navigate(`/?category=${category.toLowerCase()}`);
   }
   const onCheckEnter = (event) => {
     if (event.key === "Enter") {
