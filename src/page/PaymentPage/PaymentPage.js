@@ -1,25 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import OrderReceipt from "./component/OrderReceipt";
-import PaymentForm from "./component/PaymentForm";
 import "./style/paymentPage.style.css";
-import { cc_expires_format } from "../../utils/number";
-import { createOrder } from "../../features/order/orderSlice";
+import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
 
 const PaymentPage = () => {
-  const dispatch = useDispatch();
-  const { orderNum } = useSelector((state) => state.order);
-  const [cardValue, setCardValue] = useState({
-    cvc: "",
-    expiry: "",
-    focus: "",
-    name: "",
-    number: "",
-  });
   const navigate = useNavigate();
-  const [firstLoading, setFirstLoading] = useState(true);
   const [shipInfo, setShipInfo] = useState({
     firstName: "",
     lastName: "",
@@ -28,58 +16,112 @@ const PaymentPage = () => {
     city: "",
     zip: "",
   });
-  const {cartList, totalPrice} = useSelector(state=>state.cart)
-  useEffect(() => {
-    // 오더번호를 받으면 어디로 갈까?
-    if(firstLoading) { //처음 호출될때 성공페이지 넘어가는거막기
-      setFirstLoading(false)
-    } else {
-      if(orderNum !=="") navigate("/payment/success")
+  const {cartList, totalPrice} = useSelector(state=>state.cart);
+  const {user} = useSelector((state)=>state.user);
+  const widgetsRef = useRef(null);
+  const {firstName,lastName,contact,address,city,zip} = shipInfo
+
+  useEffect(()=>{
+    const initWidgets = async () =>{
+      try {
+        const clientKey = process.env.REACT_APP_TOSS_CLIENT_KEY;
+        const tossPayments = await loadTossPayments(clientKey);
+        const widgets = tossPayments.widgets({
+            customerKey: user?._id || ANONYMOUS,
+        });
+        widgetsRef.current = widgets;
+        await widgets.setAmount({
+          currency: "KRW",
+          value: totalPrice,
+        });
+        await Promise.all([
+          widgets.renderPaymentMethods({
+            selector: "#payment-method",
+            variantKey: "DEFAULT",
+          }),
+          widgets.renderAgreement({
+            selector: "#agreement",
+            variantKey: "AGREEMENT",
+          }),
+        ]);
+      } catch (error) {
+        console.error("결제위젯초기화실패",error)
+      }
+      
+    };
+    if(totalPrice > 0) {
+      initWidgets();
     }
-  }, [orderNum]);
+  },[user?._id, totalPrice]);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // 오더 생성하기
-    const {firstName,lastName,contact,address,city,zip} = shipInfo
-    dispatch(createOrder({
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!widgetsRef.current) {
+      alert("결제창을 불러오는 중입니다.");
+      return;
+    }
+
+    if (!cartList?.length) {
+      navigate("/cart");
+      return;
+    }
+
+    const {
+      firstName,
+      lastName,
+      contact,
+      address,
+      city,
+      zip,
+    } = shipInfo;
+
+    const orderId = `ORDER_${Date.now()}`;
+
+    const pendingOrder = {
+      orderId,
       totalPrice,
-      shipTo:{address,city,zip},
-      contact:{firstName,lastName,contact},
-      orderList: cartList.map((item)=>{
-        return {
-          productId: item.productId._id,
-          price:item.productId.price,
-          qty:item.qty,
-          size: item.size
-        }
-      })
-    }))
-  };
+      shipTo: { address, city, zip },
+      contact: { firstName, lastName, contact },
+      orderList: cartList.map((item) => ({
+        productId: item.productId._id,
+        price: item.productId.price,
+        qty: item.qty,
+        size: item.size,
+      })),
+    };
 
+    sessionStorage.setItem(
+      "pendingOrder",
+      JSON.stringify(pendingOrder)
+    );
+
+    try {
+      await widgetsRef.current.requestPayment({
+        orderId,
+        orderName:
+          cartList.length > 1
+            ? `${cartList[0].productId.name} 외 ${
+                cartList.length - 1
+              }건`
+            : cartList[0].productId.name,
+        customerName: `${lastName}${firstName}`,
+        customerEmail: user?.email,
+        customerMobilePhone: contact.replaceAll("-", ""),
+        successUrl: `${window.location.origin}/payment/success`,
+        failUrl: `${window.location.origin}/payment/fail`,
+      });
+    } catch (error) {
+      console.error("결제 요청 실패:", error);
+    }
+  };
+  
   const handleFormChange = (event) => {
     //shipInfo에 값 넣어주기
     const {name,value} = event.target
     setShipInfo({...shipInfo,[name]:value})
   };
 
-  const handlePaymentInfoChange = (event) => {
-    //카드정보 넣어주기
-    const {name,value} = event.target
-    if(name==='expiry'){
-      let newValue = cc_expires_format(value)
-      setCardValue({...cardValue,[name]:newValue})
-      return
-    }
-    setCardValue({...cardValue,[name]:value})
-  };
-
-  const handleInputFocus = (e) => {
-    setCardValue({ ...cardValue, focus: e.target.name });
-  };
-  if (cartList?.length === 0) {
-    navigate("/cart");
-  }// 주문할 아이템이 없다면 주문하기로 안넘어가게 막음
   return (
     <Container>
       <Row>
@@ -154,7 +196,8 @@ const PaymentPage = () => {
                 </div>
                 <div>
                   <h2 className="payment-title">결제 정보</h2>
-                  <PaymentForm cardValue={cardValue} handleInputFocus={handleInputFocus} handlePaymentInfoChange={handlePaymentInfoChange}/>
+                  <div id="payment-method" />
+                  <div id="agreement" className="mt-5" />
                 </div>
 
                 <Button

@@ -6,6 +6,7 @@ import {
   faBox,
   faSearch,
   faShoppingBag,
+  faHeart,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -37,6 +38,7 @@ const Navbar = () => {
   ];
   const onCategoryclick = (category) => {
     navigate(`/?category=${category.toLowerCase()}`);
+    setWidth(0)
   }
   const onCheckEnter = (event) => {
     if (event.key === "Enter") {
@@ -94,7 +96,7 @@ const Navbar = () => {
           Admin page
         </Link>
       )}
-      <div className="nav-wrap">
+      <div className="nav-wrap px-4 py-3">
       <div className="nav-logo">
           <Link to="/">
             <img width={100} src="/image/29cm.png" alt="29cm" />
@@ -145,6 +147,12 @@ const Navbar = () => {
                   {!isMobile && <span style={{ cursor: "pointer" }}>Login</span>}
                 </div>
               )}
+              <div onClick={() => navigate("/like")} className="nav-icon">
+                <FontAwesomeIcon icon={faHeart} />
+                {!isMobile && (
+                  <span style={{ cursor: "pointer" }}>My Like</span>
+                )}
+              </div>
               <div onClick={() => navigate("/cart")} className="nav-icon">
                 <FontAwesomeIcon icon={faShoppingBag} />
                 {!isMobile && (

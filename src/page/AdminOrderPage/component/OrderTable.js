@@ -1,9 +1,10 @@
 import React from "react";
 import { Table, Badge } from "react-bootstrap";
-import { badgeBg } from "../../../constants/order.constants";
+import { badgeBg, ORDER_STATUS_LABEL } from "../../../constants/order.constants";
 import { currencyFormat } from "../../../utils/number";
 
 const OrderTable = ({ header, data, openEditForm }) => {
+  console.log(data,'item')
   return (
     <div className="overflow-x">
       <Table striped bordered hover>
@@ -34,8 +35,9 @@ const OrderTable = ({ header, data, openEditForm }) => {
                 <th>{item.shipTo.address + " " + item.shipTo.city}</th>
 
                 <th>{currencyFormat(item.totalPrice)}</th>
+                <th>{item.payment?.method || "-"}</th>
                 <th>
-                  <Badge bg={badgeBg[item.status]}>{item.status}</Badge>
+                  <Badge bg={badgeBg[item.status]}>{ORDER_STATUS_LABEL[item.status]}</Badge>
                 </th>
               </tr>
             ))

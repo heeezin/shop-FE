@@ -7,6 +7,7 @@ import Navbar from "../common/component/Navbar";
 import ToastMessage from "../common/component/ToastMessage";
 import { loginWithToken } from "../features/user/userSlice";
 import { getCartQty } from "../features/cart/cartSlice";
+import { getLikeList } from "../features/like/likeSlice";
 
 const AppLayout = ({ children }) => {
   const location = useLocation();
@@ -15,12 +16,14 @@ const AppLayout = ({ children }) => {
   const { user } = useSelector((state) => state.user);
   useEffect(() => {
     dispatch(loginWithToken());
-  }, []);
+  }, [dispatch]);
+  
   useEffect(() => {
     if (user) {
       dispatch(getCartQty());
+      dispatch(getLikeList());
     }
-  }, [user]);
+  }, [user, dispatch]);
   return (
     <div>
       <ToastMessage />

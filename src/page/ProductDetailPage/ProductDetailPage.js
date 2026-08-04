@@ -7,6 +7,7 @@ import { currencyFormat } from "../../utils/number";
 import "./style/productDetail.style.css";
 import { getProductDetail } from "../../features/product/productSlice";
 import { addToCart } from "../../features/cart/cartSlice";
+import LikeButton from "../LikePage/components/LikeButton";
 
 const ProductDetail = () => {
   const dispatch = useDispatch();
@@ -57,7 +58,10 @@ const ProductDetail = () => {
           <img src={selectedProduct.image} className="w-100" alt="image" />
         </Col>
         <Col className="product-info-area" sm={6}>
-          <div className="product-info">{selectedProduct.name}</div>
+          <div className="flex justify-between items-center">
+            <div className="product-info">{selectedProduct.name}</div>
+            <LikeButton productId={selectedProduct._id}/>
+          </div>
           <div className="product-info">
             ₩ {currencyFormat(selectedProduct.price)}
           </div>

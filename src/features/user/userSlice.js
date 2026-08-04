@@ -79,6 +79,7 @@ const userSlice = createSlice({
   initialState: {
     user: null,
     loading: false,
+    authChecked: false,
     loginError: null,
     registrationError: null,
     success: false,
@@ -117,8 +118,19 @@ const userSlice = createSlice({
       state.loading = false;
       state.loginError = action.payload;
     })
-    .addCase(loginWithToken.fulfilled,(state, action)=>{
-      state.user = action.payload.user
+    .addCase(loginWithToken.pending, (state) => {
+      state.loading = true;
+      state.authChecked = false;
+    })
+    .addCase(loginWithToken.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload.user;
+      state.authChecked = true;
+    })
+    .addCase(loginWithToken.rejected, (state) => {
+      state.loading = false;
+      state.user = null;
+      state.authChecked = true;
     })
     .addCase(loginWithGoogle.pending, (state) => {
       state.loading = true;

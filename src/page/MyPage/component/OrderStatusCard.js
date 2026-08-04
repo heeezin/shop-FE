@@ -1,6 +1,6 @@
 import React from "react";
 import { Row, Col, Badge } from "react-bootstrap";
-import { badgeBg } from "../../../constants/order.constants";
+import { badgeBg, ORDER_STATUS_LABEL } from "../../../constants/order.constants";
 import { currencyFormat } from "../../../utils/number";
 
 const OrderStatusCard = ({ orderItem }) => {
@@ -29,7 +29,7 @@ const OrderStatusCard = ({ orderItem }) => {
         </Col>
         <Col md={2} className="vertical-middle">
           <div className="text-align-center text-12">주문상태</div>
-          <Badge bg={badgeBg[orderItem.status]}>{orderItem.status}</Badge>
+          <Badge bg={badgeBg[orderItem.status]}>{ORDER_STATUS_LABEL[orderItem.status]}</Badge>
         </Col>
       </Row>
     </div>

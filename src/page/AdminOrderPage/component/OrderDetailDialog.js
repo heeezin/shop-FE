@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Modal, Button, Col, Table } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { ORDER_STATUS } from "../../../constants/order.constants";
+import { ORDER_STATUS, ORDER_STATUS_LABEL } from "../../../constants/order.constants";
 import { currencyFormat } from "../../../utils/number";
 import { updateOrder } from "../../../features/order/orderSlice";
 
@@ -20,6 +20,8 @@ const OrderDetailDialog = ({ open, handleClose }) => {
   if (!selectedOrder) {
     return <></>;
   }
+  console.log(selectedOrder.contact)
+  console.log(JSON.stringify(selectedOrder.contact, null, 2));
   return (
     <Modal show={open} onHide={handleClose}>
       <Modal.Header closeButton>
@@ -34,7 +36,7 @@ const OrderDetailDialog = ({ open, handleClose }) => {
         </p>
         <p>
           연락처:
-          {`${selectedOrder.contact}`}
+          {`${selectedOrder.contact.contact}`}
         </p>
         <p>주문내역</p>
         <div className="overflow-x">
@@ -66,13 +68,31 @@ const OrderDetailDialog = ({ open, handleClose }) => {
             </tbody>
           </Table>
         </div>
+        <h5 className="mt-4">결제 정보</h5>
+        <p>결제수단 : {selectedOrder.payment?.method}</p>
+
+        <p>결제상태 : {selectedOrder.payment?.status}</p>
+
+        <p>
+        결제금액 :
+        {currencyFormat(selectedOrder.payment?.totalAmount)}
+        </p>
+
+        <p>
+        승인일시 :
+        {selectedOrder.payment?.approvedAt
+          ? new Date(
+              selectedOrder.payment.approvedAt
+            ).toLocaleString("ko-KR")
+          : "-"}
+        </p>
         <Form onSubmit={submitStatus}>
           <Form.Group as={Col} controlId="status">
             <Form.Label>Status</Form.Label>
             <Form.Select value={orderStatus} onChange={handleStatusChange}>
               {ORDER_STATUS.map((item, idx) => (
-                <option key={idx} value={item.toLowerCase()}>
-                  {item}
+                <option key={idx} value={item}>
+                  {ORDER_STATUS_LABEL[item]}
                 </option>
               ))}
             </Form.Select>

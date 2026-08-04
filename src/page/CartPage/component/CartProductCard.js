@@ -28,7 +28,7 @@ const CartProductCard = ({ item }) => {
   return (
     <div className="product-card-cart">
       <Row>
-        <Col className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <Col className="grid gap-6 sm:grid-cols-2">
           {item.productId.image ? (
             <img src={item.productId.image} width="100%" alt="product" />
           ) : (

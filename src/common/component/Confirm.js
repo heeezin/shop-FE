@@ -9,7 +9,7 @@ const Confirm = ({ show, onConfirm, onCancel, message }) => {
         </Modal.Header>
         <Modal.Footer>
             <Button variant="secondary" onClick={onCancel}>취소</Button>
-            <Button variant="danger" onClick={onConfirm}>확인</Button>
+            <Button className='bg-black' onClick={onConfirm}>확인</Button>
         </Modal.Footer>
         </Modal>
     );

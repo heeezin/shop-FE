@@ -11,6 +11,9 @@ import ProductAll from "../page/LandingPage/LandingPage";
 import ProductDetail from "../page/ProductDetailPage/ProductDetailPage";
 import RegisterPage from "../page/RegisterPage/RegisterPage";
 import PrivateRoute from "./PrivateRoute";
+import LikePage from "../page/LikePage/LikePage";
+import PaymentSuccessPage from "../page/PaymentPage/PaymentSuccessPage";
+import PaymentFailPage from "../page/PaymentPage/PaymentFailPage";
 
 const AppRouter = () => {
   return (
@@ -21,8 +24,11 @@ const AppRouter = () => {
       <Route path="/product/:id" element={<ProductDetail />} />
       <Route element={<PrivateRoute permissionLevel="customer" />}>
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/like" element={<LikePage />} />
         <Route path="/payment" element={<PaymentPage />} />
-        <Route path="/payment/success" element={<OrderCompletePage />} />
+        <Route path="/payment/success" element={<PaymentSuccessPage />} />
+        <Route path="/payment/fail" element={<PaymentFailPage />} />
+        <Route path="/order/complete" element={<OrderCompletePage />} />
         <Route path="/account/purchase" element={<MyPage />} />
       </Route>
       <Route element={<PrivateRoute permissionLevel="admin" />}>

@@ -4,6 +4,7 @@ import uiSlice from "./common/uiSlice";
 import productSlice from "./product/productSlice";
 import cartSlice from "./cart/cartSlice";
 import orderSlice from "./order/orderSlice";
+import likeSlice from "./like/likeSlice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     cart: cartSlice,
     ui: uiSlice,
     order: orderSlice,
+    like: likeSlice,
   },
 });
 export default store;
