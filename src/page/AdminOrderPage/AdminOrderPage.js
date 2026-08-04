@@ -10,8 +10,6 @@ import { clearSuccess } from "../../features/product/productSlice";
 import '../../common/style/pagination.css';
 import {
   getAllOrders,
-  getOrder,
-  getOrderList,
   setSelectedOrder,
 } from "../../features/order/orderSlice";
 import "./style/adminOrder.style.css";
