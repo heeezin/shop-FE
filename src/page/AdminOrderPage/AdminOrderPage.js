@@ -9,6 +9,7 @@ import SearchBox from "../../common/component/SearchBox";
 import { clearSuccess } from "../../features/product/productSlice";
 import '../../common/style/pagination.css';
 import {
+  getAllOrders,
   getOrder,
   getOrderList,
   setSelectedOrder,
@@ -40,7 +41,7 @@ const AdminOrderPage = () => {
     "Status",
   ];
   useEffect(() => {
-    dispatch(getOrder({ ...searchQuery }));
+    dispatch(getAllOrders({ ...searchQuery }));
     dispatch(clearSuccess());
   }, [dispatch, searchQuery]);
 

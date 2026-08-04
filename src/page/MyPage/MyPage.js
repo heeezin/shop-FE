@@ -4,14 +4,14 @@ import { Container, Spinner } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import OrderStatusCard from "./component/OrderStatusCard";
 import "./style/orderStatus.style.css";
-import { getOrder } from "../../features/order/orderSlice";
+import { getMyOrders } from "../../features/order/orderSlice";
 
 const MyPage = () => {
   const dispatch = useDispatch();
   const { orderList, loading } = useSelector((state) => state.order);
 
   useEffect(() => {
-    dispatch(getOrder());
+    dispatch(getMyOrders());
   }, [dispatch]);
 
   if (orderList?.length === 0) {

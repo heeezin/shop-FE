@@ -29,15 +29,46 @@ export const createOrder = createAsyncThunk(
   }
 );
 
-export const getOrder = createAsyncThunk(
-  "order/getOrder",
-  async (query = {}, { rejectWithValue, dispatch }) => {
+export const getMyOrders = createAsyncThunk(
+  "order/getMyOrders",
+  async (query = {}, { rejectWithValue }) => {
     try {
-      const res = await api.get("/order/all", { params: { ...query } });
-      return { orders: res.data.orders, totalPageNum: res.data.totalPageNum };
+      const res = await api.get("/order", {
+        params: query,
+      });
+
+      return {
+        orders: res.data.orders,
+        totalPageNum: res.data.totalPageNum,
+      };
     } catch (error) {
-      dispatch(showToastMessage({ message: error.message, status: "error" }));
-      return rejectWithValue(error.message);
+      return rejectWithValue(
+        error.response?.data?.error ||
+          error.response?.data?.message ||
+          error.message
+      );
+    }
+  }
+);
+
+export const getAllOrders = createAsyncThunk(
+  "order/getAllOrders",
+  async (query = {}, { rejectWithValue }) => {
+    try {
+      const res = await api.get("/order/all", {
+        params: query,
+      });
+
+      return {
+        orders: res.data.orders,
+        totalPageNum: res.data.totalPageNum,
+      };
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.error ||
+          error.response?.data?.message ||
+          error.message
+      );
     }
   }
 );
@@ -91,15 +122,27 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(getOrder.pending, (state) => {
+      .addCase(getMyOrders.pending, (state) => {
         state.loading = true;
       })
-      .addCase(getOrder.fulfilled, (state, action) => {
+      .addCase(getMyOrders.fulfilled, (state, action) => {
         state.loading = false;
         state.orderList = action.payload.orders;
         state.totalPageNum = action.payload.totalPageNum;
       })
-      .addCase(getOrder.rejected, (state, action) => {
+      .addCase(getMyOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getAllOrders.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orderList = action.payload.orders;
+        state.totalPageNum = action.payload.totalPageNum;
+      })
+      .addCase(getAllOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
