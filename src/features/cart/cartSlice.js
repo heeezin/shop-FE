@@ -11,18 +11,11 @@ const initialState = {
   totalPrice: 0,
 };
 
-// Async thunk actions
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
   async ({ id, size }, { rejectWithValue, dispatch }) => {
     try {
       const res = await api.post("/cart", { productId: id, size, qty: 1 });
-      dispatch(
-        showToastMessage({
-          message: "카트에 아이템이 추가 됐습니다.",
-          status: "success",
-        })
-      );
       dispatch(getCartList());
       return res.data.cartItemQty;
     } catch (error) {

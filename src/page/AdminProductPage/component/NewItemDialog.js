@@ -74,6 +74,8 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog,currentPage }) => {
     },{})
     if (mode === "new") {
       dispatch(createProduct({...formData, stock: totalStock}))
+      setShowDialog(false);
+
     } else {
       dispatch(editProduct({...formData, stock: totalStock, id: selectedProduct._id, page: currentPage}))
       setShowDialog(false);

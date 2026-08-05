@@ -9,17 +9,16 @@ import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
 const PaymentPage = () => {
   const navigate = useNavigate();
   const [shipInfo, setShipInfo] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
     contact: "",
     address: "",
-    city: "",
+    detailAddress: "",
     zip: "",
   });
   const {cartList, totalPrice} = useSelector(state=>state.cart);
   const {user} = useSelector((state)=>state.user);
   const widgetsRef = useRef(null);
-  const {firstName,lastName,contact,address,city,zip} = shipInfo
+  const {name,contact,address,detailAddress,zip} = shipInfo
 
   useEffect(()=>{
     const initWidgets = async () =>{
@@ -68,11 +67,10 @@ const PaymentPage = () => {
     }
 
     const {
-      firstName,
-      lastName,
+      name,
       contact,
       address,
-      city,
+      detailAddress,
       zip,
     } = shipInfo;
 
@@ -81,8 +79,8 @@ const PaymentPage = () => {
     const pendingOrder = {
       orderId,
       totalPrice,
-      shipTo: { address, city, zip },
-      contact: { firstName, lastName, contact },
+      shipTo: { address, detailAddress, zip },
+      contact: { name, contact },
       orderList: cartList.map((item) => ({
         productId: item.productId._id,
         price: item.productId.price,
@@ -105,7 +103,7 @@ const PaymentPage = () => {
                 cartList.length - 1
               }건`
             : cartList[0].productId.name,
-        customerName: `${lastName}${firstName}`,
+        customerName: `${name}`,
         customerEmail: user?.email,
         customerMobilePhone: contact.replaceAll("-", ""),
         successUrl: `${window.location.origin}/payment/success`,
@@ -123,98 +121,102 @@ const PaymentPage = () => {
   };
 
   return (
-    <Container>
-      <Row>
-        <Col lg={7}>
-          <div>
-            <h2 className="mb-2">배송 주소</h2>
-            <div>
-              <Form onSubmit={handleSubmit}>
-                <Row className="mb-3">
-                  <Form.Group as={Col} controlId="lastName">
-                    <Form.Label>성</Form.Label>
-                    <Form.Control
-                      type="text"
-                      onChange={handleFormChange}
-                      required
-                      name="lastName"
-                    />
-                  </Form.Group>
+    <Container className="py-10">
+      <Form onSubmit={handleSubmit}>
+        <Row className="g-5">
+          {/* 왼쪽 */}
+          <Col lg={7}>
+            <section>
+              <h2 className="mb-4 text-3xl font-bold">배송 주소</h2>
 
-                  <Form.Group as={Col} controlId="firstName">
-                    <Form.Label>이름</Form.Label>
-                    <Form.Control
-                      type="text"
-                      onChange={handleFormChange}
-                      required
-                      name="firstName"
-                    />
-                  </Form.Group>
-                </Row>
-
-                <Form.Group className="mb-3" controlId="formGridAddress1">
-                  <Form.Label>연락처</Form.Label>
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="name">
+                  <Form.Label>이름</Form.Label>
                   <Form.Control
-                    placeholder="010-xxx-xxxxx"
+                    type="text"
                     onChange={handleFormChange}
                     required
-                    name="contact"
+                    name="name"
+                  />
+                </Form.Group>
+              </Row>
+
+              <Form.Group className="mb-3" controlId="contact">
+                <Form.Label>연락처</Form.Label>
+                <Form.Control
+                  placeholder="010-xxxx-xxxx"
+                  onChange={handleFormChange}
+                  required
+                  name="contact"
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="address">
+                <Form.Label>주소</Form.Label>
+                <Form.Control
+                  placeholder="주소를 입력해주세요"
+                  onChange={handleFormChange}
+                  required
+                  name="address"
+                />
+              </Form.Group>
+
+              <Row className="mb-5">
+                <Form.Group as={Col} controlId="detailAddress">
+                  <Form.Label>상세주소</Form.Label>
+                  <Form.Control
+                    onChange={handleFormChange}
+                    required
+                    name="detailAddress"
                   />
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formGridAddress2">
-                  <Form.Label>주소</Form.Label>
+                <Form.Group as={Col} controlId="zip">
+                  <Form.Label>우편번호</Form.Label>
                   <Form.Control
-                    placeholder="Apartment, studio, or floor"
                     onChange={handleFormChange}
                     required
-                    name="address"
+                    name="zip"
                   />
                 </Form.Group>
+              </Row>
+            </section>
 
-                <Row className="mb-3">
-                  <Form.Group as={Col} controlId="formGridCity">
-                    <Form.Label>City</Form.Label>
-                    <Form.Control
-                      onChange={handleFormChange}
-                      required
-                      name="city"
-                    />
-                  </Form.Group>
-
-                  <Form.Group as={Col} controlId="formGridZip">
-                    <Form.Label>Zip</Form.Label>
-                    <Form.Control
-                      onChange={handleFormChange}
-                      required
-                      name="zip"
-                    />
-                  </Form.Group>
-                </Row>
-                <div className="mobile-receipt-area">
-                  <OrderReceipt cartList={cartList} totalPrice={totalPrice}/>
-                </div>
-                <div>
-                  <h2 className="payment-title">결제 정보</h2>
-                  <div id="payment-method" />
-                  <div id="agreement" className="mt-5" />
-                </div>
-
-                <Button
-                  variant="dark"
-                  className="payment-button pay-button"
-                  type="submit"
-                >
-                  결제하기
-                </Button>
-              </Form>
+            {/* 모바일에서만 주문내역 */}
+            <div className="d-lg-none mb-5">
+              <OrderReceipt
+                cartList={cartList}
+                totalPrice={totalPrice}
+              />
             </div>
-          </div>
-        </Col>
-        <Col lg={5} className="receipt-area">
-          <OrderReceipt cartList={cartList} totalPrice={totalPrice}  />
-        </Col>
-      </Row>
+
+            <section>
+              <h2 className="mb-4 text-3xl font-bold">결제 정보</h2>
+
+              <div id="payment-method" />
+              <div id="agreement" className="mt-5" />
+
+              <Button
+                variant="dark"
+                className="mt-6 w-100 py-3"
+                type="submit"
+              >
+                {Number(totalPrice).toLocaleString()}원 결제하기
+              </Button>
+            </section>
+          </Col>
+
+          {/* 데스크톱에서만 주문내역 */}
+          <Col lg={5} className="d-none d-lg-block">
+            <div className="sticky-top" style={{ top: "110px" }}>
+              <OrderReceipt
+                cartList={cartList}
+                totalPrice={totalPrice}
+              />
+            </div>
+          </Col>
+        </Row>
+      </Form>
     </Container>
   );
 };

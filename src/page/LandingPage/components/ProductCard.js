@@ -14,7 +14,7 @@ const ProductCard = ({ item }) => {
       <div className="card" style={{background: "none"}} onClick={() => showProduct(item._id)}>
         <img src={item?.image} alt={item?.image} />
         <div className="flex justify-between px-1">
-          <div>
+          <div className="whitespace-normal break-words mr-4">
             <div>{item?.name}</div>
             <div>₩ {currencyFormat(item?.price)}</div>
           </div>

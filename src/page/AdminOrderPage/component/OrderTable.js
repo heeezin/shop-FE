@@ -32,7 +32,7 @@ const OrderTable = ({ header, data, openEditForm }) => {
                   <th></th>
                 )}
 
-                <th>{item.shipTo.address + " " + item.shipTo.city}</th>
+                <th>{item.shipTo.address + " " + item.shipTo.detailAddress}</th>
 
                 <th>{currencyFormat(item.totalPrice)}</th>
                 <th>{item.payment?.method || "-"}</th>

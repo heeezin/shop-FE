@@ -8,6 +8,9 @@ import "./style/productDetail.style.css";
 import { getProductDetail } from "../../features/product/productSlice";
 import { addToCart } from "../../features/cart/cartSlice";
 import LikeButton from "../LikePage/components/LikeButton";
+import useConfirm from "../../utils/useConfirm";
+import { showToastMessage } from "../../features/common/uiSlice";
+import Confirm from "../../common/component/Confirm";
 
 const ProductDetail = () => {
   const dispatch = useDispatch();
@@ -16,9 +19,10 @@ const ProductDetail = () => {
   const { id } = useParams();
   const [sizeError, setSizeError] = useState(false);
   const user = useSelector((state) => state.user.user);
+  const { show, message, openConfirm, handleConfirm, closeConfirm } = useConfirm();
   const navigate = useNavigate();
 
-  const addItemToCart = () => {
+  const addItemToCart = async () => {
     if(size==='') {
       setSizeError(true)
       return
@@ -27,8 +31,15 @@ const ProductDetail = () => {
       navigate('/login')
       return
     }
-    // 카트에 아이템 추가하기
-    dispatch(addToCart({id,size}))
+    const result = await dispatch(addToCart({ id, size }));
+
+    if (addToCart.fulfilled.match(result)) {
+      openConfirm(
+        () => navigate("/cart"),
+        "장바구니에 담았습니다. 장바구니로 이동하시겠습니까?"
+      );
+      return;
+    }
   };
   const selectSize = (value) => {
     if(sizeError) setSizeError(false)
@@ -105,6 +116,12 @@ const ProductDetail = () => {
           </Button>
         </Col>
       </Row>
+      <Confirm
+        show={show}
+        onConfirm={handleConfirm}
+        onCancel={closeConfirm}
+        message={message}
+      />
     </Container>
   );
 };
