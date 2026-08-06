@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import OrderReceipt from "./component/OrderReceipt";
 import "./style/paymentPage.style.css";
@@ -18,7 +18,16 @@ const PaymentPage = () => {
   const {cartList, totalPrice} = useSelector(state=>state.cart);
   const {user} = useSelector((state)=>state.user);
   const widgetsRef = useRef(null);
-  const {name,contact,address,detailAddress,zip} = shipInfo
+  const {name,contact,address,detailAddress,zip} = shipInfo;
+  const location = useLocation();
+  const isBuyNow = location.state?.buyNow;
+  const paymentItem = isBuyNow ? [location.state.item]:cartList;
+  const paymentTotalPrice = paymentItem.reduce(
+  (total, item) =>
+    total + Number(item.productId.price) * Number(item.qty),
+  0
+);
+
 
   useEffect(()=>{
     const initWidgets = async () =>{
@@ -31,7 +40,7 @@ const PaymentPage = () => {
         widgetsRef.current = widgets;
         await widgets.setAmount({
           currency: "KRW",
-          value: totalPrice,
+          value: paymentTotalPrice,
         });
         await Promise.all([
           widgets.renderPaymentMethods({
@@ -48,10 +57,10 @@ const PaymentPage = () => {
       }
       
     };
-    if(totalPrice > 0) {
+    if(paymentTotalPrice > 0) {
       initWidgets();
     }
-  },[user?._id, totalPrice]);
+  },[user?._id, paymentTotalPrice]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,8 +70,8 @@ const PaymentPage = () => {
       return;
     }
 
-    if (!cartList?.length) {
-      navigate("/cart");
+    if (!paymentItem?.length) {
+      navigate(isBuyNow ? "/" : "/cart");
       return;
     }
 
@@ -78,10 +87,10 @@ const PaymentPage = () => {
 
     const pendingOrder = {
       orderId,
-      totalPrice,
+      totalPrice: paymentTotalPrice,
       shipTo: { address, detailAddress, zip },
       contact: { name, contact },
-      orderList: cartList.map((item) => ({
+      orderList: paymentItem.map((item) => ({
         productId: item.productId._id,
         price: item.productId.price,
         qty: item.qty,
@@ -98,11 +107,11 @@ const PaymentPage = () => {
       await widgetsRef.current.requestPayment({
         orderId,
         orderName:
-          cartList.length > 1
-            ? `${cartList[0].productId.name} 외 ${
-                cartList.length - 1
+          paymentItem.length > 1
+            ? `${paymentItem[0].productId.name} 외 ${
+                paymentItem.length - 1
               }건`
-            : cartList[0].productId.name,
+            : paymentItem[0].productId.name,
         customerName: `${name}`,
         customerEmail: user?.email,
         customerMobilePhone: contact.replaceAll("-", ""),
@@ -185,8 +194,8 @@ const PaymentPage = () => {
             {/* 모바일에서만 주문내역 */}
             <div className="d-lg-none mb-5">
               <OrderReceipt
-                cartList={cartList}
-                totalPrice={totalPrice}
+                cartList={paymentItem}
+                totalPrice={paymentTotalPrice}
               />
             </div>
 
@@ -201,7 +210,7 @@ const PaymentPage = () => {
                 className="mt-6 w-100 py-3"
                 type="submit"
               >
-                {Number(totalPrice).toLocaleString()}원 결제하기
+                {Number(paymentTotalPrice).toLocaleString()}원 결제하기
               </Button>
             </section>
           </Col>
@@ -210,8 +219,8 @@ const PaymentPage = () => {
           <Col lg={5} className="d-none d-lg-block">
             <div className="sticky-top" style={{ top: "110px" }}>
               <OrderReceipt
-                cartList={cartList}
-                totalPrice={totalPrice}
+                cartList={paymentItem}
+                totalPrice={paymentTotalPrice}
               />
             </div>
           </Col>

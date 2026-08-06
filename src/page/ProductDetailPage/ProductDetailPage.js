@@ -41,6 +41,26 @@ const ProductDetail = () => {
       return;
     }
   };
+  const paymentBtn = () => {
+    if(size==='') {
+      setSizeError(true)
+      return
+    } 
+    if(!user) {
+      navigate('/login')
+      return
+    }
+    navigate("/payment",{
+      state: {
+        buyNow: true,
+        item: {
+          productId: selectedProduct,
+          qty: 1,
+          size,
+        }
+      }
+    })
+  }
   const selectSize = (value) => {
     if(sizeError) setSizeError(false)
     setSize(value)
@@ -108,12 +128,16 @@ const ProductDetail = () => {
                 )}
             </Dropdown.Menu>
           </Dropdown>
-          <div className="warning-message">
+          <div className="warning-message mt-1">
             {sizeError && "사이즈를 선택해주세요."}
           </div>
-          <Button variant="dark" className="add-button" onClick={addItemToCart}>
-            추가
-          </Button>
+          <div className="mt-4 flex gap-3">
+            <Button variant="dark" className="bg-white text-black flex-1" onClick={addItemToCart}>
+            장바구니 담기
+            </Button>
+            <Button variant="dark" className="flex-1" onClick={paymentBtn}>구매하기</Button>
+          </div>
+          
         </Col>
       </Row>
       <Confirm
